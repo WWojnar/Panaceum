@@ -1,0 +1,4 @@
+com\panaceum\model\User.class
+com\panaceum\util\DatabaseConnection.class
+com\panaceum\dao\UserDao.class
+com\panaceum\service\UserService.class
