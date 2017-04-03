@@ -1,1 +1,0 @@
-# guncda-repository
