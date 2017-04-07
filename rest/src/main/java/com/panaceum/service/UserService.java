@@ -34,7 +34,7 @@ public class UserService {
     public Response register(String incomingData) { //incomingData to odbierany JSON, by sie nie pierdolic slemy po stringu
         User user = new User();
 
-        String email;
+        String login;
         String passwd;
 
         try {
@@ -42,11 +42,11 @@ public class UserService {
                                                             //UWAGA: wymaga to by odbierany json mial dobry format
                                                             //dla tego przykladu nasz json wyglada tak:
                                                             //{"user":{
-                                                            //  "email":"chuje wuje",
+                                                            //  "login":"chuje wuje",
                                                             //  "password":"dzikie weze"}}
             json = json.getJSONObject("user");  //wchodzimy do sekcji user JSONA
 
-            email = json.getString("email");    //biezemy email i password z jsona
+            login = json.getString("login");    //biezemy email i password z jsona
             passwd = json.getString("password");
         } catch (JSONException e) { //dolary przeciw orzechą ze JSON jest zle napisany
             System.err.println(e.toString());
@@ -56,7 +56,7 @@ public class UserService {
             return Response.serverError().entity("Unkown error").build();
         }
 
-        user.setEmail(email);   //modelujemy obiekt
+        user.setLogin(login);   //modelujemy obiekt
         user.setPassword(passwd);
 
         return userDao.register(user);  //wywolujemy odpowiednia metode dostepu do bazu danych
@@ -69,7 +69,7 @@ public class UserService {
     public Response login(String incomingData) {
         User user = new User();
 
-        String email;
+        String login;
         String passwd;
 
         try {
@@ -77,7 +77,7 @@ public class UserService {
 
             json = json.getJSONObject("user");
 
-            email = json.getString("email");
+            login = json.getString("login");
             passwd = json.getString("password");
         } catch (JSONException e) {
             System.err.println(e.toString());
@@ -87,7 +87,7 @@ public class UserService {
             return Response.serverError().entity("Unkown error").build();
         }
 
-        user.setEmail(email);
+        user.setLogin(login);
         user.setPassword(passwd);
 
         return userDao.login(user);

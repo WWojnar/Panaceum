@@ -44,12 +44,12 @@ public class ClientTest {
         return print_returned;
     }
 
-    private String register(String email, String passwd) {
+    private String register(String login, String passwd) {
         JSONObject json = null;
         try {
             json = new JSONObject()
                     .put("user", new JSONObject()
-                            .put("email", email)
+                            .put("login", login)
                             .put("password", passwd)
                     );
         } catch (JSONException e) {
@@ -62,18 +62,19 @@ public class ClientTest {
         return dataTransfer(json, url);
     }
     
-    private String login(String email, String passwd) {
+    private String login(String login, String passwd) {
         JSONObject json = null;
         try {
             json = new JSONObject()
                     .put("user", new JSONObject()
-                            .put("email", email)
+                            .put("login", login)
                             .put("password", passwd)
                     );
         } catch (JSONException e) {
             return "Klient: Blad przy tworzeniu JSONa";
         }
-        
+
+        //String url = "http://localhost:8084/Panaceum/user/login";
         String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/user/login";
         
         return dataTransfer(json, url);
@@ -83,8 +84,8 @@ public class ClientTest {
         ClientTest test = new ClientTest();
         String help = "";
 
-        //help = test.register("kluski@makaron.pl", "1234");
-        help = test.login("kluski@makaron.pl", "1234");
+        //help = test.register("kluski", "1234");
+        help = test.login("kluski", "1234");
 
         System.out.println(help);
     }

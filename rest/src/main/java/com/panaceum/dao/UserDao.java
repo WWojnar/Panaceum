@@ -23,12 +23,13 @@ public class UserDao {
         try {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM tuser"); //SELECT zwrocil dane i wsadzil w resultSet
+            resultSet = statement.executeQuery("SELECT * FROM tUser"); //SELECT zwrocil dane i wsadzil w resultSet
 
             while (resultSet.next()) {  //petla w ktorej odczytuje dane, dla pojedynczych rekordow dziala tak samo dobrze
                 user = new User();
 
-                user.setEmail((resultSet.getString("email")));  //pobieranie stringa z komorki z kolumny email 
+                user.setId(resultSet.getInt("id"));
+                user.setLogin(resultSet.getString("login"));  //pobieranie stringa z komorki z kolumny email 
                                                                 //dla innego typu zwracanego z kolumny inna metoda oczywiscie
                                                                 //kolumne mozna precyzowac jej nazwa lub numerem w kolejnosci
                                                                 //zaczawszy od 1
@@ -39,6 +40,8 @@ public class UserDao {
             }
         } catch (Exception ex) {
             System.out.println("Zapytanie nie zostalo wykonane: " + ex.toString());
+            
+            connection.closeConnection();
         }
         connection.closeConnection();
         return users;
@@ -52,15 +55,15 @@ public class UserDao {
             connection.establishConnection();   //otwieramy polaczenie z baza danych, domyslnie ustawiona na BD z serwera
                                                 //dla waszej prywatnej bazy danych musicie w metodzie zmienic ustawienia polaczenia
             statement = connection.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT register('" + user.getEmail() + "','" + user.getPassword() + "')");  //zapytanie do BD
+            resultSet = statement.executeQuery("SELECT register('" + user.getLogin() + "','" + user.getPassword() + "')");  //zapytanie do BD
                                                                                 //tutaj wywoluje metode ktora napisalem w BD, ktora wszystko odpowiednio zrobi
                                                                                 //ale mozna sie bawic i bez tego
         } catch (Exception e) {
             System.err.println(e.toString());
             connection.closeConnection();
 
-            if (e.toString().contains("email")) {   //przy powtorzonym adresie cos tam o mailu bedzie pisalo w wyjatku
-                return Response.status(406).entity("Email already exist in DB").build();
+            if (e.toString().contains("login")) {   //przy powtorzonym adresie cos tam o mailu bedzie pisalo w wyjatku
+                return Response.status(406).entity("Login already exist in DB").build();
             }
 
             return Response.serverError().build();  //a tu cholera wie co sie stalo
@@ -77,7 +80,7 @@ public class UserDao {
         try {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT login('" + user.getEmail()
+            resultSet = statement.executeQuery("SELECT login('" + user.getLogin()
                     + "', '" + user.getPassword() + "')");
 
             while (resultSet.next()) {

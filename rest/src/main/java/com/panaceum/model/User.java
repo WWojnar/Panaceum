@@ -4,36 +4,45 @@ import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "user")
-//@XmlType(propOrder={"email", "password", "token"})
+//@XmlType(propOrder={"id", "login", "password", "token"})
 public class User {
     
     @Id
-    private String email;
+    private int id;
+    private String login;
     private String password;
     private String token;
-	
-    public String getEmail() {
-    	return email;
+
+    public int getId() {
+        return id;
     }
 
-    public void setEmail(String email) {
-	this.email = email;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getToken() {
-	return token;
+    public String getLogin() {
+        return login;
     }
 
-    public void setToken(String token) {
-	this.token = token;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getPassword() {
-	return password;
+        return password;
     }
 
     public void setPassword(String password) {
-	this.password = password;
+        this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
     
 }
