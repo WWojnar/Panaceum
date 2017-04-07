@@ -1,4 +1,6 @@
-Here lies the the server part of the Panaceum project... [t.b.c.]
+REST interface for Panaceum Server.
 
-REST + klasa testowa (konsola). Na podstawie klasy testowej można logike apki desktopowej zrobić albo jakoś to ładniej.
-Chyba wszystko OK :o
+This application is based on Eclipse and Tomcat usage to provide working example.
+
+Additionally included is simple java interface that allows testing the working example.
+
