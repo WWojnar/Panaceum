@@ -33,6 +33,19 @@ BEGIN
 END;
 $$;
 
+CREATE FUNCTION validate(_login character varying, _token character) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF _token=(SELECT token FROM tUser WHERE login=_login) 
+	   AND _token IS NOT NULL THEN
+		RETURN TRUE;
+	ELSE
+		RETURN FALSE;
+	END IF;
+END;
+$$;
+
 --Sequence
 
 CREATE SEQUENCE inc_tUser
