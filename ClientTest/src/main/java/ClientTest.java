@@ -48,10 +48,8 @@ public class ClientTest {
         JSONObject json = null;
         try {
             json = new JSONObject()
-                    .put("user", new JSONObject()
                             .put("login", login)
-                            .put("password", passwd)
-                    );
+                            .put("password", passwd);
         } catch (JSONException e) {
             return "Klient: Blad przy tworzeniu JSONa";
         }
@@ -66,10 +64,8 @@ public class ClientTest {
         JSONObject json = null;
         try {
             json = new JSONObject()
-                    .put("user", new JSONObject()
                             .put("login", login)
-                            .put("password", passwd)
-                    );
+                            .put("password", passwd);
         } catch (JSONException e) {
             return "Klient: Blad przy tworzeniu JSONa";
         }
