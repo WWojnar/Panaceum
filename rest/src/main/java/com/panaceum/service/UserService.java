@@ -11,8 +11,8 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.panaceum.dao.UserDao;
 import com.panaceum.model.User;
-import java.util.List;
 import javax.ws.rs.GET;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 //sciezka do klasy serwisu encji User
@@ -25,6 +25,17 @@ public class UserService {
     @Path("/test")
     public String test() {
         return "It just works";
+    }
+    
+    @GET
+    @Path("/getAll/{login}/{token}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAll(@PathParam("login") String login, @PathParam("token") String token) {
+        User user = new User();
+        user.setLogin(login);
+        user.setToken(token);
+        
+        return userDao.getAll(user);
     }
 
     @POST
@@ -44,8 +55,6 @@ public class UserService {
                                                             //{"user":{
                                                             //  "login":"chuje wuje",
                                                             //  "password":"dzikie weze"}}
-            json = json.getJSONObject("user");  //wchodzimy do sekcji user JSONA
-
             login = json.getString("login");    //biezemy email i password z jsona
             passwd = json.getString("password");
         } catch (JSONException e) { //dolary przeciw orzechą ze JSON jest zle napisany
@@ -74,8 +83,6 @@ public class UserService {
 
         try {
             JSONObject json = new JSONObject(incomingData);
-
-            json = json.getJSONObject("user");
 
             login = json.getString("login");
             passwd = json.getString("password");

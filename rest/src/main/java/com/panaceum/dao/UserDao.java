@@ -1,5 +1,6 @@
 package com.panaceum.dao;
 
+import com.google.gson.Gson;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -7,44 +8,68 @@ import javax.ws.rs.core.Response;
 
 import com.panaceum.model.User;
 import com.panaceum.util.DatabaseConnection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao {
 
     private static DatabaseConnection connection = new DatabaseConnection();
-
-    public List<User> getAll() {    //metoda nieuzywana przez nic w restcie, maly pokaz jak sie odbiera informacje z BD
-        List<User> users = new ArrayList<>();
-        User user;
+    
+    /* Sprawdza prawa użytkownika do wykonania akcji,
+       porównuje token użytkownika z tokenem w BD u użytkowniak o określonym loginie,
+       robi to za pomocą funkcji w BD */
+    public boolean validate(User user) {
         Statement statement;
-        ResultSet resultSet;    //zapytanie do BD moze do tego wsadzic odpowiedz z BD
-
+        ResultSet resultSet;
+        boolean result = false;
+        
         try {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM tUser"); //SELECT zwrocil dane i wsadzil w resultSet
-
-            while (resultSet.next()) {  //petla w ktorej odczytuje dane, dla pojedynczych rekordow dziala tak samo dobrze
-                user = new User();
-
-                user.setId(resultSet.getInt("id"));
-                user.setLogin(resultSet.getString("login"));  //pobieranie stringa z komorki z kolumny email 
-                                                                //dla innego typu zwracanego z kolumny inna metoda oczywiscie
-                                                                //kolumne mozna precyzowac jej nazwa lub numerem w kolejnosci
-                                                                //zaczawszy od 1
-                user.setPassword(resultSet.getString("password"));
-                user.setToken(resultSet.getString("token"));
-
-                users.add(user);
-            }
-        } catch (Exception ex) {
-            System.out.println("Zapytanie nie zostalo wykonane: " + ex.toString());
+            resultSet = statement.executeQuery("SELECT validate('" + user.getLogin() + "', '" + user.getToken() + "')");
             
-            connection.closeConnection();
+            while (resultSet.next()) {
+                result = resultSet.getBoolean(1);
+            }
+        } catch (SQLException ex) {
+            System.err.println(ex.toString());
         }
         connection.closeConnection();
-        return users;
+        return result;
+    }
+
+    public Response getAll(User user) {
+            if (!this.validate(user)) return Response.status(403).entity("User doesn't have necessary permissions").build();
+            
+            List<User> users = new ArrayList<>();
+            Statement statement;
+            ResultSet resultSet;    //zapytanie do BD moze do tego wsadzic odpowiedz z BD
+            
+            try {
+                connection.establishConnection();
+                statement = connection.getConnection().createStatement();
+                resultSet = statement.executeQuery("SELECT * FROM tUser"); //SELECT zwrocil dane i wsadzil w resultSet
+                
+                while (resultSet.next()) {  //petla w ktorej odczytuje dane, dla pojedynczych rekordow dziala tak samo dobrze
+                    user = new User();
+                    
+                    user.setId(resultSet.getInt("id"));
+                    user.setLogin(resultSet.getString("login"));  //pobieranie stringa z komorki z kolumny email
+                    //dla innego typu zwracanego z kolumny inna metoda oczywiscie
+                    //kolumne mozna precyzowac jej nazwa lub numerem w kolejnosci
+                    //zaczawszy od 1
+                    users.add(user);
+                }
+            } catch (Exception e) {
+                System.out.println(e.toString());
+                connection.closeConnection();
+                return Response.serverError().build();
+            }
+            connection.closeConnection();
+
+            Gson gson = new Gson();
+            return Response.ok(gson.toJson(users)).build();
     }
 
     public Response register(User user) {
@@ -95,7 +120,7 @@ public class UserDao {
 
         connection.closeConnection();
         if (user.getToken() == null) {
-            return Response.status(404).entity("Nie ma takiego uzytkownika").build();
+            return Response.status(404).entity("No such user").build();
         } else {
             return Response.ok("{\"token\":\"" + user.getToken() + "\"}").build();
         }
