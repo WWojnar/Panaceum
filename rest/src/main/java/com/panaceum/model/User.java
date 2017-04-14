@@ -1,9 +1,7 @@
 package com.panaceum.model;
 
 import javax.persistence.Id;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "user")
 //@XmlType(propOrder={"id", "login", "password", "token"})
 public class User {
     
