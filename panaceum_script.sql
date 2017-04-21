@@ -235,3 +235,49 @@ CREATE TABLE prescription (
 	FOREIGN KEY (excerptId) REFERENCES excerpt (id),
 	FOREIGN KEY (doctorId) REFERENCES doctor (id)
 );
+
+--Views
+
+CREATE VIEW doctorView AS
+	SELECT doctor.id AS doctorId,
+		speciality,
+		licenceNumber,
+		person.pesel,
+		firstName,
+		lastName,
+		phone,
+		email,
+		address.id AS addressId,
+		city,
+		street,
+		buildingNumber,
+		flatNumber,
+		zipCode,
+		tUser.id AS userId,
+		login,
+		password,
+		token
+	FROM doctor
+		JOIN person ON doctor.pesel = person.pesel
+		JOIN address ON person.addressId = address.id
+		JOIN tUser ON person.tUserId = tUser.id;
+
+CREATE VIEW patientView AS
+	SELECT patient.id AS patientId,
+		sex,
+		age,
+		bloodType,
+		person.pesel,
+		firstName,
+		lastName,
+		phone,
+		email,
+		address.id AS addressId,
+		city,
+		street,
+		buildingNumber,
+		flatNumber,
+		zipCode
+	FROM patient
+		JOIN person ON patient.pesel = person.pesel
+		JOIN address ON person.addressId = address.id;
