@@ -91,6 +91,8 @@ public class DoctorDao {
         }
         connection.closeConnection();
 
+        if (doctor.getId() == 0) return Response.status(404).entity("No such doctor found").build();
+        
         Gson gson = new Gson();
         return Response.ok(gson.toJson(doctor)).build();
     }
