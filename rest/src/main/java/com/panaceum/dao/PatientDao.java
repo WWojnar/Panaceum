@@ -16,79 +16,134 @@ import java.util.List;
 public class PatientDao {
 
     private static DatabaseConnection connection = new DatabaseConnection();
-    
+
     private static UserDao userDao = new UserDao();
-    
-    public Response getById(User user, int id){
-        if (!userDao.validate(user)) return Response.status(403).entity("User doesn't have necessary permissions").build();
-            
-            List<Patient> patients = new ArrayList<>();
-            Statement statement;
-            ResultSet resultSet;    //zapytanie do BD moze do tego wsadzic odpowiedz z BD
-            
-            try {
-                connection.establishConnection();
-                statement = connection.getConnection().createStatement();
-                resultSet = statement.executeQuery("SELECT * FROM patientView WHERE patientid = " + id); //SELECT zwrocil dane i wsadzil w resultSet
-                
-                while (resultSet.next()) {  //petla w ktorej odczytuje dane, dla pojedynczych rekordow dziala tak samo dobrze
-                    Patient patient = new Patient();
-                    
-                    patient.setId(resultSet.getInt("patientId"));
-                    patient.setSex(resultSet.getString("sex"));
-                    patient.setAge(resultSet.getInt("age"));
-                    patient.setBloodType(resultSet.getString("bloodType"));
-                    patient.setPesel(resultSet.getString("pesel"));
-                    //pobieranie stringa z komorki z kolumny email
-                    //dla innego typu zwracanego z kolumny inna metoda oczywiscie
-                    //kolumne mozna precyzowac jej nazwa lub numerem w kolejnosci
-                    //zaczawszy od 1
-                    patients.add(patient);
-                }
-            } catch (Exception e) {
-                System.out.println(e.toString());
-                connection.closeConnection();
-                return Response.serverError().build();
-            }
-            connection.closeConnection();
 
-            Gson gson = new Gson();
-            return Response.ok(gson.toJson(patients)).build();
+    public Response getById(User user, int id) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Patient patient = new Patient();
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM patientView WHERE patientId = " + id);
+
+            while (resultSet.next()) {
+                patient.setId(resultSet.getInt("patientId"));
+                patient.setSex(resultSet.getString("sex"));
+                patient.setAge(resultSet.getInt("age"));
+                patient.setBloodType(resultSet.getString("bloodType"));
+                patient.setPesel(resultSet.getString("pesel"));
+                patient.setFirstName(resultSet.getString("firstName"));
+                patient.setLastName(resultSet.getString("lastName"));
+                patient.setPhone(resultSet.getString("phone"));
+                patient.setEmail(resultSet.getString("email"));
+                patient.setAddressId(resultSet.getInt("addressId"));
+                patient.setCity(resultSet.getString("city"));
+                patient.setStreet(resultSet.getString("street"));
+                patient.setBuildingNumber(resultSet.getString("buildingNumber"));
+                patient.setFlatNumber(resultSet.getString("flatNumber"));
+                patient.setZipCode(resultSet.getString("zipCode"));
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        connection.closeConnection();
+
+        if (patient.getId() == 0) {
+            return Response.status(404).entity("No such patient found").build();
+        }
+
+        Gson gson = new Gson();
+        return Response.ok(gson.toJson(patient)).build();
     }
+
     public Response getAll(User user) {
-//            if (!userDao.validate(user)) return Response.status(403).entity("User doesn't have necessary permissions").build();
-//            
-            List<Patient> patients = new ArrayList<>();
-            Statement statement;
-            ResultSet resultSet;    //zapytanie do BD moze do tego wsadzic odpowiedz z BD
-            
-            try {
-                connection.establishConnection();
-                statement = connection.getConnection().createStatement();
-                resultSet = statement.executeQuery("SELECT * FROM patientView"); //SELECT zwrocil dane i wsadzil w resultSet
-                
-                while (resultSet.next()) {  //petla w ktorej odczytuje dane, dla pojedynczych rekordow dziala tak samo dobrze
-                    Patient patient = new Patient();
-                    
-                    patient.setId(resultSet.getInt("patientId"));
-                    patient.setSex(resultSet.getString("sex"));
-                    patient.setAge(resultSet.getInt("age"));
-                    patient.setBloodType(resultSet.getString("bloodType"));
-                    patient.setPesel(resultSet.getString("pesel"));
-                    //pobieranie stringa z komorki z kolumny email
-                    //dla innego typu zwracanego z kolumny inna metoda oczywiscie
-                    //kolumne mozna precyzowac jej nazwa lub numerem w kolejnosci
-                    //zaczawszy od 1
-                    patients.add(patient);
-                }
-            } catch (Exception e) {
-                System.out.println(e.toString());
-                connection.closeConnection();
-                return Response.serverError().build();
-            }
-            connection.closeConnection();
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
 
-            Gson gson = new Gson();
-            return Response.ok(gson.toJson(patients)).build();
+        List<Patient> patients = new ArrayList<>();
+        Statement statement;
+        ResultSet resultSet;    //zapytanie do BD moze do tego wsadzic odpowiedz z BD
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM patientView"); //SELECT zwrocil dane i wsadzil w resultSet
+
+            while (resultSet.next()) {
+                Patient patient = new Patient();
+
+                patient.setId(resultSet.getInt("patientId"));
+                patient.setPesel(resultSet.getString("pesel"));
+                patient.setFirstName(resultSet.getString("firstName"));
+                patient.setLastName(resultSet.getString("lastName"));
+
+                patients.add(patient);
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        connection.closeConnection();
+
+        Gson gson = new Gson();
+        return Response.ok(gson.toJson(patients)).build();
     }
+
+    public Response getByPesel(User user, String pesel) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Patient patient = new Patient();
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM patientView WHERE pesel = '" + pesel + "'");
+
+            while (resultSet.next()) {
+                patient.setId(resultSet.getInt("patientId"));
+                patient.setSex(resultSet.getString("sex"));
+                patient.setAge(resultSet.getInt("age"));
+                patient.setBloodType(resultSet.getString("bloodType"));
+                patient.setPesel(resultSet.getString("pesel"));
+                patient.setFirstName(resultSet.getString("firstName"));
+                patient.setLastName(resultSet.getString("lastName"));
+                patient.setPhone(resultSet.getString("phone"));
+                patient.setEmail(resultSet.getString("email"));
+                patient.setAddressId(resultSet.getInt("addressId"));
+                patient.setCity(resultSet.getString("city"));
+                patient.setStreet(resultSet.getString("street"));
+                patient.setBuildingNumber(resultSet.getString("buildingNumber"));
+                patient.setFlatNumber(resultSet.getString("flatNumber"));
+                patient.setZipCode(resultSet.getString("zipCode"));
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        connection.closeConnection();
+
+        if (patient.getId() == 0) {
+            return Response.status(404).entity("No such patient found").build();
+        }
+
+        Gson gson = new Gson();
+        return Response.ok(gson.toJson(patient)).build();
+    }
+
 }
