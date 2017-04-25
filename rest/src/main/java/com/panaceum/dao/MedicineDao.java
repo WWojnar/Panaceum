@@ -73,6 +73,10 @@ public class MedicineDao {
             return Response.serverError().build();
         }
         connection.closeConnection();
+        
+        if (medicine.getId() == 0) {
+            return Response.status(404).entity("No such medicine found").build();
+        }
 
         Gson gson = new Gson();
         return Response.ok(gson.toJson(medicine)).build();
