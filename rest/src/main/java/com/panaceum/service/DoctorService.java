@@ -36,4 +36,14 @@ public class DoctorService {
         return doctorDao.getById(user, id);
     }
     
+    @GET
+    @Path("/getPrescrptions/{id}/{login}/{token}")
+    @Produces(MediaType.APPLICATION_JSON)
+        public Response getPrescriptions(@PathParam("id") int id, @PathParam("login") String login, @PathParam("token") String token) {
+        User user = new User();
+        user.setLogin(login);
+        user.setToken(token);    
+        return doctorDao.getPrescriptions(user, id);
+    }
+    
 }

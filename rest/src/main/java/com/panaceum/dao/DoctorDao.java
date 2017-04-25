@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.panaceum.model.Doctor;
 import com.panaceum.model.Medicine;
 import com.panaceum.model.User;
+import com.panaceum.model.Prescription;
 import com.panaceum.util.DatabaseConnection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -97,4 +98,38 @@ public class DoctorDao {
         return Response.ok(gson.toJson(doctor)).build();
     }
     
+    public Response getPrescriptions(User user, int id) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Prescription prescription = new Prescription();
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM prescription WHERE id = " + id);
+
+            while (resultSet.next()) {
+                prescription.setId(resultSet.getInt("id"));
+                prescription.setDosage(resultSet.getString("dosage"));
+                prescription.setMedicineId(resultSet.getInt("medicineId"));
+                prescription.setTherapyPlanId(resultSet.getInt("therapyPlanId"));
+                prescription.setExcerptId(resultSet.getInt("excerptId"));
+                prescription.setDoctorid(resultSet.getInt("doctorid"));
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        connection.closeConnection();
+
+        if (prescription.getId() == 0) return Response.status(404).entity("No prescriptions for doctor").build();
+        
+        Gson gson = new Gson();
+        return Response.ok(gson.toJson(prescription)).build();
+    }
 }
