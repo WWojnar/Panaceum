@@ -33,7 +33,7 @@ public class PatientService {
         return patientDao.getAll(user);
     }
     
-        @GET
+    @GET
     @Path("/getById/{id}/{login}/{token}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") int id, @PathParam("login") String login, @PathParam("token") String token) {
@@ -42,6 +42,17 @@ public class PatientService {
         user.setToken(token);
         
         return patientDao.getById(user, id);
+    }
+    
+    @GET
+    @Path("/getByPesel/{pesel}/{login}/{token}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getByPesel(@PathParam("pesel") String pesel, @PathParam("login") String login, @PathParam("token") String token) {
+        User user = new User();
+        user.setLogin(login);
+        user.setToken(token);
+        
+        return patientDao.getByPesel(user, pesel);
     }
     
 }
