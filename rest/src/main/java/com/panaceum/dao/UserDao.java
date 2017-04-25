@@ -120,6 +120,7 @@ public class UserDao {
 
         connection.closeConnection();
         if (user.getToken() == null) {
+            System.err.println("No such user");
             return Response.status(404).entity("No such user").build();
         } else {
             return Response.ok("{\"token\":\"" + user.getToken() + "\"}").build();

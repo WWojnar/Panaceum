@@ -9,6 +9,7 @@ public class History {
     private String nurseCard;
     private String finalCard;
     private int patientId;
+    private String pesel;
     private int doctorId;
     private int hospitalId;
 
@@ -44,6 +45,14 @@ public class History {
         this.patientId = patientId;
     }
 
+    public String getPesel() {
+        return pesel;
+    }
+
+    public void setPesel(String pesel) {
+        this.pesel = pesel;
+    }
+    
     public int getDoctorId() {
         return doctorId;
     }
@@ -60,14 +69,14 @@ public class History {
         this.hospitalId = hospitalId;
     }
 
-    public class Interview {
+    //public class Interview {
 
         private int interviewId;
         private String interviewDate;
         private String idc10;
         private boolean firstIllnes;
         private String symptoms;
-        private String recognition;
+        private String interviewRecognition;
         private String treatment;
 
         public int getInterviewId() {
@@ -110,12 +119,12 @@ public class History {
             this.symptoms = symptoms;
         }
 
-        public String getRecognition() {
-            return recognition;
+        public String getInterviewRecognition() {
+            return interviewRecognition;
         }
 
-        public void setRecognition(String recognition) {
-            this.recognition = recognition;
+        public void setInterviewRecognition(String recognition) {
+            this.interviewRecognition = recognition;
         }
 
         public String getTreatment() {
@@ -126,9 +135,9 @@ public class History {
             this.treatment = treatment;
         }
 
-    }
+    //}
 
-    private class FirstExamination {
+    //private class FirstExamination {
 
         private int firstExaminationId;
         private String pressure;
@@ -194,13 +203,13 @@ public class History {
             this.content = content;
         }
 
-    }
+    //}
 
-    private class Excerpt {
+    //private class Excerpt {
 
         private int excerptId;
         private String excerptDate;
-        private String recognition;
+        private String excerptRecognition;
         private String recomendations;
         private String epicrisis;
 
@@ -220,12 +229,12 @@ public class History {
             this.excerptDate = excerptDate;
         }
 
-        public String getRecognition() {
-            return recognition;
+        public String getExcerptRecognition() {
+            return excerptRecognition;
         }
 
-        public void setRecognition(String recognition) {
-            this.recognition = recognition;
+        public void setExcerptRecognition(String recognition) {
+            this.excerptRecognition = recognition;
         }
 
         public String getRecomendations() {
@@ -244,9 +253,9 @@ public class History {
             this.epicrisis = epicrisis;
         }
 
-    }
+    //}
     
-    private class InfectionCard {
+    //private class InfectionCard {
         
         private int infectionCardId;
         private boolean factor1;
@@ -282,6 +291,7 @@ public class History {
         private boolean factor28;
         private boolean factor29;
         private boolean factor30;
+        private String notepad;
 
         public int getInfectionCardId() {
             return infectionCardId;
@@ -554,9 +564,15 @@ public class History {
         public void setFactor30(boolean factor30) {
             this.factor30 = factor30;
         }
+
+        public String getNotepad() {
+            return notepad;
+        }
+
+        public void setNotepad(String notepad) {
+            this.notepad = notepad;
+        }
         
-        
-        
-    }
+    //}
 
 }
