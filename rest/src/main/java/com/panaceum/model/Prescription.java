@@ -10,9 +10,15 @@ public class Prescription {
     private int id;
     private String dosage;
     private int medicineId;
+    private String medicineName;
+    private String activeSubstance;
     private int therapyPlanId;
     private int excerptId;
     private int doctorid;
+    private int patientId;
+    private String patientPesel;
+    private String patientFirstName;
+    private String patientLastName;
 
     public int getId() {
         return id;
@@ -36,6 +42,22 @@ public class Prescription {
 
     public void setMedicineId(int medicineId) {
         this.medicineId = medicineId;
+    }
+
+    public String getMedicineName() {
+        return medicineName;
+    }
+
+    public void setMedicineName(String medicineName) {
+        this.medicineName = medicineName;
+    }
+
+    public String getActiveSubstance() {
+        return activeSubstance;
+    }
+
+    public void setActiveSubstance(String activeSubstance) {
+        this.activeSubstance = activeSubstance;
     }
 
     public int getTherapyPlanId() {
@@ -62,5 +84,36 @@ public class Prescription {
         this.doctorid = doctorid;
     }
 
-    
+    public int getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
+    }
+
+    public String getPatientPesel() {
+        return patientPesel;
+    }
+
+    public void setPatientPesel(String patientPesel) {
+        this.patientPesel = patientPesel;
+    }
+
+    public String getPatientFirstName() {
+        return patientFirstName;
+    }
+
+    public void setPatientFirstName(String patientFirstName) {
+        this.patientFirstName = patientFirstName;
+    }
+
+    public String getPatientLastName() {
+        return patientLastName;
+    }
+
+    public void setPatientLastName(String patientLastName) {
+        this.patientLastName = patientLastName;
+    }
+  
 }

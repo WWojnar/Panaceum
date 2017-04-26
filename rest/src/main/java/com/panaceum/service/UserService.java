@@ -93,7 +93,7 @@ public class UserService {
             System.out.println(e.toString());
             return Response.serverError().entity("Unkown error").build();
         }
-
+System.err.println("tu");
         user.setLogin(login);
         user.setPassword(passwd);
 

@@ -11,9 +11,9 @@ import javax.ws.rs.core.Response;
 
 @Path("/doctor")
 public class DoctorService {
-    
+
     private DoctorDao doctorDao = new DoctorDao();
-    
+
     @GET
     @Path("/getAll/{login}/{token}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -21,10 +21,10 @@ public class DoctorService {
         User user = new User();
         user.setLogin(login);
         user.setToken(token);
-        
+
         return doctorDao.getAll(user);
     }
-    
+
     @GET
     @Path("/getById/{id}/{login}/{token}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,18 +32,19 @@ public class DoctorService {
         User user = new User();
         user.setLogin(login);
         user.setToken(token);
-        
+
         return doctorDao.getById(user, id);
     }
-    
+
     @GET
-    @Path("/getPrescrptions/{id}/{login}/{token}")
+    @Path("/getPrescriptions/{doctorId}/{login}/{token}")
     @Produces(MediaType.APPLICATION_JSON)
-        public Response getPrescriptions(@PathParam("id") int id, @PathParam("login") String login, @PathParam("token") String token) {
+    public Response getPrescriptions(@PathParam("doctorId") int doctorId, @PathParam("login") String login, @PathParam("token") String token) {
         User user = new User();
         user.setLogin(login);
-        user.setToken(token);    
-        return doctorDao.getPrescriptions(user, id);
+        user.setToken(token);
+
+        return doctorDao.getPrescriptions(user, doctorId);
     }
-    
+
 }

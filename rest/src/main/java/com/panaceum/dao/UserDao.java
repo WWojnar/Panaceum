@@ -111,19 +111,25 @@ public class UserDao {
             while (resultSet.next()) {
                 user.setToken(resultSet.getString(1));
             }
+            //do poprawy jak się zachce
+            resultSet = statement.executeQuery("SELECT id FROM tUser WHERE login = '" + user.getLogin() + "'");
+            
+            while (resultSet.next()) {
+                user.setId(resultSet.getInt("id"));
+            }
         } catch (Exception e) {
             System.err.println(e.toString());
             connection.closeConnection();
 
             return Response.serverError().build();
         }
-
+System.err.println("tu");
         connection.closeConnection();
         if (user.getToken() == null) {
             System.err.println("No such user");
             return Response.status(404).entity("No such user").build();
         } else {
-            return Response.ok("{\"token\":\"" + user.getToken() + "\"}").build();
+            return Response.ok("{\"id\":" + user.getId() + ",\"token\":\"" + user.getToken() + "\"}").build();
         }
     }
 
