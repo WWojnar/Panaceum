@@ -101,6 +101,8 @@ public class UserDao {
     public Response login(User user) {
         Statement statement;
         ResultSet resultSet;
+System.err.println("to");
+        int doctorId = 0;
 
         try {
             connection.establishConnection();
@@ -112,10 +114,19 @@ public class UserDao {
                 user.setToken(resultSet.getString(1));
             }
             //do poprawy jak się zachce
-            resultSet = statement.executeQuery("SELECT id FROM tUser WHERE login = '" + user.getLogin() + "'");
+            resultSet = statement.executeQuery("SELECT * FROM userDoctorView WHERE login = '" + user.getLogin() + "'");
             
             while (resultSet.next()) {
-                user.setId(resultSet.getInt("id"));
+                user.setId(resultSet.getInt("userId"));
+                doctorId = resultSet.getInt("doctorId");
+            }
+            
+            if (user.getId() == 0) {
+                resultSet = statement.executeQuery("SELECT id FROM tUser WHERE login = '" + user.getLogin() + "'");
+                
+                while (resultSet.next()) {
+                    user.setId(resultSet.getInt("id"));
+                }
             }
         } catch (Exception e) {
             System.err.println(e.toString());
@@ -123,13 +134,13 @@ public class UserDao {
 
             return Response.serverError().build();
         }
-System.err.println("tu");
+
         connection.closeConnection();
         if (user.getToken() == null) {
             System.err.println("No such user");
             return Response.status(404).entity("No such user").build();
         } else {
-            return Response.ok("{\"id\":" + user.getId() + ",\"token\":\"" + user.getToken() + "\"}").build();
+            return Response.ok("{\"userId\":" + user.getId() + ",\"doctorId\":" + doctorId + ",\"token\":\"" + user.getToken() + "\"}").build();
         }
     }
 

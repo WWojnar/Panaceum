@@ -225,6 +225,8 @@ CREATE TABLE medicine (
 CREATE TABLE prescription (
 	id integer NOT NULL,
 	dosage text,
+	prescriptionDate date NOT NULL,
+	expiryDate date,
 	medicineId integer NOT NULL,
 	therapyPlanId integer,
 	excerptId integer,
@@ -365,6 +367,8 @@ CREATE VIEW patientView AS
 CREATE OR REPLACE VIEW prescriptionExcerptView AS
 	SELECT prescription.id AS prescriptionId,
 		dosage,
+		prescriptionDate,
+		expiryDate,
 		medicineId,
 		name AS medicineName,
 		activeSubstance,
@@ -385,6 +389,8 @@ CREATE OR REPLACE VIEW prescriptionExcerptView AS
 CREATE OR REPLACE VIEW prescriptionView AS
 	SELECT prescription.id AS prescriptionId,
 		dosage,
+		prescriptionDate,
+		expiryDate,
 		medicineId,
 		name AS medicineName,
 		activeSubstance,
