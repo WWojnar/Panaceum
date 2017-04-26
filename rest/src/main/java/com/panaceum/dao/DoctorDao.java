@@ -113,11 +113,14 @@ public class DoctorDao {
             statement = connection.getConnection().createStatement();
             resultSet = statement.executeQuery("SELECT * FROM prescriptionView WHERE doctorId = " + doctorId);
 
-            while (resultSet.next()) {System.err.println("to");
+            while (resultSet.next()) {
+
                 Prescription prescription = new Prescription();
 
                 prescription.setId(resultSet.getInt("prescriptionId"));
                 prescription.setDosage(resultSet.getString("dosage"));
+                prescription.setPrescriptionDate(resultSet.getString("prescriptionDate"));
+                prescription.setExpiryDate(resultSet.getString("expiryDate"));
                 prescription.setMedicineId(resultSet.getInt("medicineId"));
                 prescription.setMedicineName(resultSet.getString("medicineName"));
                 prescription.setActiveSubstance(resultSet.getString("activeSubstance"));
@@ -138,15 +141,21 @@ public class DoctorDao {
         }
         connection.closeConnection();
 
-        if (prescriptions.get(0).getId() == 0) {
-            return this.getPrescriptionsFromExcerpt(user, doctorId);
-            //return Response.status(404).entity("No prescriptions for doctor found").build();
+        try {
+            if (prescriptions.get(0).getId() == 0) {System.err.println("to");
+                return this.getPrescriptionsFromExcerpt(user, doctorId);
+                //return Response.status(404).entity("No prescriptions for doctor found").build();
+            }
+        } catch (IndexOutOfBoundsException e) {System.err.println("to");
+            System.out.println(e.toString());
+            connection.closeConnection();
+            return Response.status(404).entity("No prescriptions for doctor found").build();
         }
 
         Gson gson = new Gson();
         return Response.ok(gson.toJson(prescriptions)).build();
     }
-    
+
     //tymczasowo, trzeba znaleźć lepsze rozwiązanie
     private Response getPrescriptionsFromExcerpt(User user, int doctorId) {
         /*if (!userDao.validate(user)) {
@@ -162,11 +171,14 @@ public class DoctorDao {
             statement = connection.getConnection().createStatement();
             resultSet = statement.executeQuery("SELECT * FROM prescriptionExcerptView WHERE doctorId = " + doctorId);
 
-            while (resultSet.next()) {System.err.println("to");
+            while (resultSet.next()) {
+                System.err.println("to");
                 Prescription prescription = new Prescription();
 
                 prescription.setId(resultSet.getInt("prescriptionId"));
                 prescription.setDosage(resultSet.getString("dosage"));
+                prescription.setPrescriptionDate(resultSet.getString("prescriptionDate"));
+                prescription.setExpiryDate(resultSet.getString("expiryDate"));
                 prescription.setMedicineId(resultSet.getInt("medicineId"));
                 prescription.setMedicineName(resultSet.getString("medicineName"));
                 prescription.setActiveSubstance(resultSet.getString("activeSubstance"));
@@ -187,7 +199,13 @@ public class DoctorDao {
         }
         connection.closeConnection();
 
-        if (prescriptions.get(0).getId() == 0) {
+        try {
+            if (prescriptions.get(0).getId() == 0) {
+                return Response.status(404).entity("No prescriptions for doctor found").build();
+            }
+        } catch (IndexOutOfBoundsException e) {System.err.println("to");
+            System.out.println(e.toString());
+            connection.closeConnection();
             return Response.status(404).entity("No prescriptions for doctor found").build();
         }
 

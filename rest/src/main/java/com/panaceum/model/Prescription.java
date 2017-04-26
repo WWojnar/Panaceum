@@ -9,6 +9,8 @@ public class Prescription {
     @Id
     private int id;
     private String dosage;
+    private String prescriptionDate;
+    private String expiryDate;
     private int medicineId;
     private String medicineName;
     private String activeSubstance;
@@ -34,6 +36,22 @@ public class Prescription {
 
     public void setDosage(String dosage) {
         this.dosage = dosage;
+    }
+
+    public String getPrescriptionDate() {
+        return prescriptionDate;
+    }
+
+    public void setPrescriptionDate(String prescriptionDate) {
+        this.prescriptionDate = prescriptionDate;
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     public int getMedicineId() {
