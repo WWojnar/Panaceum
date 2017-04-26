@@ -330,6 +330,18 @@ CREATE OR REPLACE VIEW historyview AS
 		JOIN excerpt ON history.excerptid = excerpt.id
 		JOIN infectioncard ON history.infectioncardid = infectioncard.id;
 
+CREATE OR REPLACE VIEW hospitalView AS
+	SELECT hospital.id AS hospitalId,
+		name,
+		address.id AS addressId,
+		city,
+		street,
+		buildingNumber,
+		flatNumber,
+		zipCode
+	FROM hospital
+		JOIN address ON hospital.addressId = address.id;
+		
 CREATE VIEW patientView AS
 	SELECT patient.id AS patientId,
 		sex,
@@ -349,3 +361,43 @@ CREATE VIEW patientView AS
 	FROM patient
 		JOIN person ON patient.pesel = person.pesel
 		JOIN address ON person.addressId = address.id;
+
+CREATE OR REPLACE VIEW prescriptionExcerptView AS
+	SELECT prescription.id AS prescriptionId,
+		dosage,
+		medicineId,
+		name AS medicineName,
+		activeSubstance,
+		prescription.therapyPlanId,
+		prescription.excerptId,
+		prescription.doctorId,
+		patient.id AS patientId,
+		patient.pesel AS patientPesel,
+		firstName AS patientFirstName,
+		lastName AS patientLastName
+	FROM prescription
+		JOIN medicine ON prescription.medicineId = medicine.id
+		JOIN excerpt ON prescription.excerptId = excerpt.id
+		JOIN history ON excerpt.Id = history.excerptId
+		JOIN patient ON history.patientId = patient.id
+		JOIN person ON patient.pesel = person.pesel;
+		
+CREATE OR REPLACE VIEW prescriptionView AS
+	SELECT prescription.id AS prescriptionId,
+		dosage,
+		medicineId,
+		name AS medicineName,
+		activeSubstance,
+		prescription.therapyPlanId,
+		prescription.excerptId,
+		prescription.doctorId,
+		patient.id AS patientId,
+		patient.pesel AS patientPesel,
+		firstName AS patientFirstName,
+		lastName AS patientLastName
+	FROM prescription
+		JOIN medicine ON prescription.medicineId = medicine.id
+		JOIN therapyPlan ON prescription.therapyPlanId = therapyPlan.id
+		JOIN history ON therapyPlan.historyId = history.id
+		JOIN patient ON history.patientId = patient.id
+		JOIN person ON patient.pesel = person.pesel;
