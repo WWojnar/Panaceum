@@ -5,6 +5,32 @@ CREATE TYPE sex AS ENUM (
 
 --Functions
 
+CREATE OR REPLACE FUNCTION addPrescription(_login character varying, _token character, _dosage text, _expiryDate date, _name character varying, _doctorId integer, _patientId integer) RETURNS integer AS
+$BODY$
+DECLARE ret integer;
+BEGIN
+	IF _token = (SELECT token FROM tUser WHERE login = _login) THEN
+		INSERT INTO prescription (
+			dosage,
+			prescriptionDate,
+			expiryDate,
+			medicineId,
+			therapyPlanId,
+			doctorId)
+		VALUES (
+			_dosage,
+			now(),
+			_expiryDate,
+			(SELECT id FROM medicine WHERE name = _name),
+			(SELECT therapyPlan.id FROM therapyPlan JOIN history ON therapyPlan.historyId = history.id WHERE patientId = _patientId),
+			_doctorId) RETURNING id INTO ret;
+		RETURN ret;
+	ELSE RETURN 0;
+	END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION login(_login character varying, _passwd character varying) RETURNS character
 	LANGUAGE plpgsql
 	AS $$
@@ -48,13 +74,20 @@ $$;
 
 --Sequence
 
-CREATE SEQUENCE inc_tUser
-    START WITH 0
+CREATE SEQUENCE inc_prescription
+    START WITH 1
     INCREMENT BY 1
     MINVALUE 0
     NO MAXVALUE
     CACHE 1;
 
+CREATE SEQUENCE inc_tUser
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
 --Tables
 
 CREATE TABLE tUser (
@@ -223,7 +256,7 @@ CREATE TABLE medicine (
 );
 
 CREATE TABLE prescription (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_prescription'::regclass) NOT NULL,
 	dosage text,
 	prescriptionDate date NOT NULL,
 	expiryDate date,
@@ -407,3 +440,11 @@ CREATE OR REPLACE VIEW prescriptionView AS
 		JOIN history ON therapyPlan.historyId = history.id
 		JOIN patient ON history.patientId = patient.id
 		JOIN person ON patient.pesel = person.pesel;
+		
+CREATE OR REPLACE VIEW userDoctorView AS
+	SELECT tUser.id AS userId,
+		login,
+		doctor.id AS doctorId
+	FROM tuser
+		JOIN person ON tUser.id = person.tUserId
+		JOIN doctor ON person.pesel = doctor.pesel;
