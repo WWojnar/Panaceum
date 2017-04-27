@@ -75,6 +75,28 @@ public class ClientTest {
         
         return dataTransfer(json, url);
     }
+	
+	private String addPrescription(String login, String token, String dosage, String expiryDate,
+            String medicineName, int doctorId, int patientId) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("dosage", dosage)
+                    .put("expiryDate", expiryDate)
+                    .put("medicineName", medicineName)
+                    .put("doctorId", doctorId)
+                    .put("patientId", patientId);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        //String url = "http://localhost:8084/Panaceum/prescription/add";
+        String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/prescription/add";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -82,7 +104,8 @@ public class ClientTest {
 
         //help = test.register("kluski", "1234");
         help = test.login("kluski", "1234");
-
+		help = test.addPrescription("kluski", "45263ae3d04964189f2477ebabcdb283", "wcinaj pan", "2017-08-15", "Medicine1", 1, 1);
+		
         System.out.println(help);
     }
     
