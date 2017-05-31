@@ -10,6 +10,7 @@ public class User {
     private String login;
     private String password;
     private String token;
+    private String privileges;
 
     public int getId() {
         return id;
@@ -41,6 +42,14 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getPrivileges() {
+        return privileges;
+    }
+
+    public void setPrivileges(String privileges) {
+        this.privileges = privileges;
     }
     
 }
