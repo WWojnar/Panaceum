@@ -2,6 +2,7 @@ package com.panaceum.service;
 
 import com.panaceum.dao.HistoryDao;
 import com.panaceum.dao.PatientDao;
+import com.panaceum.model.Patient;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -12,6 +13,8 @@ import com.panaceum.model.User;
 import javax.ws.rs.GET;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 //sciezka do klasy serwisu encji User
 @Path("/patient")
@@ -60,8 +63,77 @@ public class PatientService {
         User user = new User();
         user.setLogin(login);
         user.setToken(token);
-System.err.println("to");
+
         return historyDao.getAll(user, pesel);
+    }
+    
+    @POST
+    @Path("/add")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response add(String incomingData) {
+        User user = new User();
+        Patient patient = new Patient();
+        
+        String login,
+                token,
+                sex;
+        int age;
+        String bloodType,
+                pesel,
+                firstName,
+                lastName,
+                phone,
+                email,
+                city,
+                street,
+                buildingNumber,
+                flatNumber,
+                zipCode;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+            sex = json.getString("sex");
+            age = json.getInt("age");
+            bloodType = json.getString("bloodType");
+            pesel = json.getString("pesel");
+            firstName = json.getString("firstName");
+            lastName = json.getString("lastName");
+            phone = json.getString("phone");
+            email = json.getString("email");
+            city = json.getString("city");
+            street = json.getString("street");
+            buildingNumber = json.getString("buildingNumber");
+            flatNumber = json.getString("flatNumber");
+            zipCode = json.getString("zipCode");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        patient.setSex(sex);
+        patient.setAge(age);
+        patient.setBloodType(bloodType);
+        patient.setPesel(pesel);
+        patient.setFirstName(firstName);
+        patient.setLastName(lastName);
+        patient.setPhone(phone);
+        patient.setEmail(email);
+        patient.setCity(city);
+        patient.setStreet(street);
+        patient.setBuildingNumber(buildingNumber);
+        patient.setFlatNumber(flatNumber);
+        patient.setZipCode(zipCode);
+        
+        return patientDao.add(user, patient);
     }
     
 }
