@@ -11,6 +11,8 @@ import com.panaceum.util.DatabaseConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserDao {
 
@@ -33,6 +35,28 @@ public class UserDao {
                 result = resultSet.getBoolean(1);
             }
         } catch (SQLException ex) {
+            connection.closeConnection();
+            System.err.println(ex.toString());
+        }
+        connection.closeConnection();
+        return result;
+    }
+    
+    public String checkPrivileges(String login) {
+        Statement statement;
+        ResultSet resultSet;
+        String result = "ERROR";
+        
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT privileges FROM tUser WHERE login = '" + login + "'");
+            
+            while (resultSet.next()) {
+                result = resultSet.getString(1);
+            }
+        } catch (SQLException ex) {
+            connection.closeConnection();
             System.err.println(ex.toString());
         }
         connection.closeConnection();
