@@ -1,3 +1,8 @@
+CREATE TYPE privileges AS ENUM (
+	'admin',
+	'doctor'
+);
+
 CREATE TYPE sex AS ENUM (
     'male',
 	'female'
@@ -46,16 +51,18 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION register(_login character varying, _passwd character varying) RETURNS void
+CREATE OR REPLACE FUNCTION register(_login character varying, _passwd character varying, _privileges privileges) RETURNS void
 	LANGUAGE plpgsql
 	AS $$
 BEGIN
 	INSERT INTO tuser (
     	login,
-        password)
+        password,
+		privileges)
     VALUES (
         _login,
-        _passwd);
+        _passwd,
+		_privileges);
 END;
 $$;
 
@@ -74,7 +81,84 @@ $$;
 
 --Sequence
 
+CREATE SEQUENCE inc_address
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_doctor
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_excerpt
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_firstExamination
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_history
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_hospital
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_infectionCard
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_interview
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_medicine
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_patient
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
 CREATE SEQUENCE inc_prescription
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 0
+    NO MAXVALUE
+    CACHE 1;
+	
+CREATE SEQUENCE inc_therapyPlan
     START WITH 1
     INCREMENT BY 1
     MINVALUE 0
@@ -95,11 +179,12 @@ CREATE TABLE tUser (
 	login character varying(32) NOT NULL UNIQUE,
 	password character varying(32) NOT NULL,
 	token character(32),
+	privileges privileges,
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE address (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_address'::regclass) NOT NULL,
 	city character varying(30) NOT NULL,
 	street character varying(50) NOT NULL,
 	buildingNumber character varying(6) NOT NULL,
@@ -122,15 +207,17 @@ CREATE TABLE person (
 );
 
 CREATE TABLE hospital (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_hospital'::regclass) NOT NULL,
 	name character varying(255) NOT NULL,
+	regon character(9),
+	phone character varying(30),
 	addressId integer NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (addressId) REFERENCES address (id) ON DELETE CASCADE
 );
 
 CREATE TABLE doctor (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_doctor'::regclass) NOT NULL,
 	speciality character varying(255) NOT NULL,
 	licenceNumber character(10) NOT NULL,
 	pesel character(11) NOT NULL,
@@ -139,7 +226,7 @@ CREATE TABLE doctor (
 );
 
 CREATE TABLE patient (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_patient'::regclass) NOT NULL,
 	sex sex NOT NULL,
 	age integer NOT NULL,
 	bloodType character(2) NOT NULL,
@@ -149,7 +236,7 @@ CREATE TABLE patient (
 );
 
 CREATE TABLE excerpt (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_excerpt'::regclass) NOT NULL,
 	excerptDate date NOT NULL,
 	recognition text NOT NULL,
 	recomendations text NOT NULL,
@@ -158,7 +245,7 @@ CREATE TABLE excerpt (
 );
 
 CREATE tABLE interview (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_interview'::regclass) NOT NULL,
 	interviewDate date NOT NULL,
 	idc10 character(3) NOT NULL,
 	firstIllnes boolean NOT NULL,
@@ -169,7 +256,7 @@ CREATE tABLE interview (
 );
 
 CREATE TABLE firstExamination (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_firstExamination'::regclass) NOT NULL,
 	pressure character varying(10),
 	pulse character varying(10),
 	temperature float,
@@ -180,7 +267,7 @@ CREATE TABLE firstExamination (
 );
 
 CREATE TABLE infectionCard (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_infectionCard'::regclass) NOT NULL,
 	factor1 boolean NOT NULL,
 	factor2 boolean NOT NULL,
 	factor3 boolean NOT NULL,
@@ -219,7 +306,7 @@ CREATE TABLE infectionCard (
 );
 
 CREATE TABLE history (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_history'::regclass) NOT NULL,
 	nurseCard text,
 	finalCard text,
 	patientId integer NOT NULL,
@@ -240,7 +327,7 @@ CREATE TABLE history (
 );
 
 CREATE TABLE therapyPlan (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_therapyPlan'::regclass) NOT NULL,
 	examination text,
 	orders text,
 	historyId integer NOT NULL,
@@ -249,7 +336,7 @@ CREATE TABLE therapyPlan (
 );
 
 CREATE TABLE medicine (
-	id integer NOT NULL,
+	id integer DEFAULT nextval('inc_medicine'::regclass) NOT NULL,
 	name character varying(50) NOT NULL,
 	activeSubstance text NOT NULL,
 	PRIMARY KEY (id)
@@ -291,7 +378,8 @@ CREATE VIEW doctorView AS
 		tUser.id AS userId,
 		login,
 		password,
-		token
+		token,
+		privileges
 	FROM doctor
 		JOIN person ON doctor.pesel = person.pesel
 		JOIN address ON person.addressId = address.id
@@ -368,6 +456,8 @@ CREATE OR REPLACE VIEW historyview AS
 CREATE OR REPLACE VIEW hospitalView AS
 	SELECT hospital.id AS hospitalId,
 		name,
+		regon,
+		phone,
 		address.id AS addressId,
 		city,
 		street,
