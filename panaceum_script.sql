@@ -42,7 +42,6 @@ CREATE OR REPLACE FUNCTION addPatient(_sex sex, _age integer, _bloodType charact
 	DECLARE ret integer;
 BEGIN
 	IF 0 = (SELECT COUNT(*) FROM patient WHERE pesel = _pesel) THEN
-		SELECT addPerson(_pesel, _firstName, _lastName, _phone, _email, _city, _street, _buildingNumber, _flatNumber, _zipCode);
 		INSERT INTO patient (
 			sex,
 			age,
@@ -52,16 +51,17 @@ BEGIN
 			_sex,
 			_age,
 			_bloodType,
-			_pesel) RETURNING id INTO ret;
+			(SELECT addPerson(_pesel, _firstName, _lastName, _phone, _email, _city, _street, _buildingNumber, _flatNumber, _zipCode))) RETURNING id INTO ret;
 		RETURN ret;
 	ELSE RETURN 0;
 	END IF;
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION addPerson(_pesel character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS void
+CREATE OR REPLACE FUNCTION addPerson(_pesel character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS character
 	LANGUAGE plpgsql
     AS $$
+	DECLARE ret character(11);
 BEGIN
 	IF 0 = (SELECT COUNT(*) FROM person WHERE pesel = _pesel) THEN
 		INSERT INTO person (
@@ -77,8 +77,10 @@ BEGIN
 			_lastName,
 			_phone,
 			_email,
-			(SELECT addAddress(_city, _street, _buildingNumber, _flatNumber, _zipCode)));
+			(SELECT addAddress(_city, _street, _buildingNumber, _flatNumber, _zipCode))) RETURNING pesel INTO ret;
+		RETURN ret;
 	END IF;
+	RETURN _pesel;
 END;
 $$;
 
