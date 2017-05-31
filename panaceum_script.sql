@@ -10,6 +10,78 @@ CREATE TYPE sex AS ENUM (
 
 --Functions
 
+CREATE OR REPLACE FUNCTION addAddress(_city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+BEGIN
+	ret := (SELECT checkAddress (_city, _street, _buildingNumber, _flatNumber, _zipCode));
+	IF ret = 0 THEN
+		INSERT INTO address (
+			city,
+			street,
+			buildingNumber,
+			flatNumber,
+			zipCode)
+		VALUES (
+			_city,
+			_street,
+			_buildingNumber,
+			_flatNumber,
+			_zipCode) RETURNING id INTO ret;
+		RETURN ret;
+	ELSE
+		RETURN ret;
+	END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION addPatient(_sex sex, _age integer, _bloodType character, _pesel character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer 
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+BEGIN
+	IF 0 = (SELECT COUNT(*) FROM patient WHERE pesel = _pesel) THEN
+		SELECT addPerson(_pesel, _firstName, _lastName, _phone, _email, _city, _street, _buildingNumber, _flatNumber, _zipCode);
+		INSERT INTO patient (
+			sex,
+			age,
+			bloodType,
+			pesel)
+		VALUES (
+			_sex,
+			_age,
+			_bloodType,
+			_pesel) RETURNING id INTO ret;
+		RETURN ret;
+	ELSE RETURN 0;
+	END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION addPerson(_pesel character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS void
+	LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF 0 = (SELECT COUNT(*) FROM person WHERE pesel = _pesel) THEN
+		INSERT INTO person (
+			pesel,
+			firstName,
+			lastName,
+			phone,
+			email,
+			addressId)
+		VALUES (
+			_pesel,
+			_firstName,
+			_lastName,
+			_phone,
+			_email,
+			(SELECT addAddress(_city, _street, _buildingNumber, _flatNumber, _zipCode)));
+	END IF;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION addPrescription(_login character varying, _token character, _dosage text, _expiryDate date, _name character varying, _doctorId integer, _patientId integer) RETURNS integer AS
 $BODY$
 DECLARE ret integer;
@@ -35,6 +107,26 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION checkAddress(_city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+BEGIN
+	ret := (SELECT id
+		FROM address
+		WHERE city = _city AND
+			street = _street AND
+			buildingNumber = _buildingNumber AND
+			flatNumber = _flatNumber AND
+			zipCode = _zipCode);
+	IF ret IS NOT NULL THEN
+		RETURN ret;
+	ELSE
+		RETURN 0;
+	END IF;
+END;
+$$;
 
 CREATE OR REPLACE FUNCTION login(_login character varying, _passwd character varying) RETURNS character
 	LANGUAGE plpgsql
