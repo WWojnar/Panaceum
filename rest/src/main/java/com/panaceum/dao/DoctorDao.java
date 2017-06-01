@@ -234,11 +234,10 @@ public class DoctorDao {
                     + "', '" + doctor.getStreet() + "', '" + doctor.getBuildingNumber() + "', '" + doctor.getFlatNumber()
                     + "', '" + doctor.getZipCode() + "', '" + doctor.getLogin() +"')");
 
-            while (resultSet.next()) {System.err.println("to");
-                String result = resultSet.getString(1);System.err.println(result);System.err.println(result.length());
-                doctor.setId(Integer.parseInt(result.substring(1, result.indexOf(","))));System.err.println(result.indexOf(",") + 1);System.err.println(result.indexOf(")"));
-                System.err.println(result.substring(result.indexOf(",") + 1, result.indexOf(")")));
-                doctor.setPassword(result.substring(result.indexOf(",") + 1, result.indexOf(")")));System.err.println(doctor.getPassword());
+            while (resultSet.next()) {
+                String result = resultSet.getString(1);
+                doctor.setId(Integer.parseInt(result.substring(1, result.indexOf(","))));
+                doctor.setPassword(result.substring(result.indexOf(",") + 1, result.indexOf(")")));
             }
         } catch (SQLException ex) {
             System.out.println(ex.toString());
