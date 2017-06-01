@@ -75,6 +75,46 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION addHospital(_name character varying, _regon character, _phone character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+BEGIN
+	IF 0 = (SELECT COUNT(*) FROM hospital WHERE name = _name) THEN
+		INSERT INTO hospital (
+			name,
+			regon,
+			phone,
+			addressId)
+		VALUES (
+			_name,
+			_regon,
+			_phone,
+			(SELECT addAddress(_city, _street, _buildingNumber, _flatNumber, _zipCode))) RETURNING id INTO ret;
+		RETURN ret;
+	ELSE RETURN 0;
+	END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION addMedicine(_name character varying, _activeSubstance text) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+BEGIN
+	IF 0 = (SELECT COUNT(*) FROM medicine WHERE name = _name) THEN
+		INSERT INTO medicine (
+			name,
+			activeSubstance)
+		VALUES (
+			_name,
+			_activeSubstance) RETURNING id INTO ret;
+		RETURN ret;
+	ELSE RETURN 0;
+	END IF;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION addPatient(_sex sex, _age integer, _bloodType character, _pesel character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer 
 	LANGUAGE plpgsql
     AS $$

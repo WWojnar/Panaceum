@@ -7,6 +7,8 @@ public class Hospital {
     @Id
     private int id;
     private String name;
+    private String regon;
+    private String phone;
     private int addressId;
     private String city;
     private String street;
@@ -28,6 +30,22 @@ public class Hospital {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRegon() {
+        return regon;
+    }
+
+    public void setRegon(String regon) {
+        this.regon = regon;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public int getAddressId() {
