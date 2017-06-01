@@ -174,6 +174,30 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String addHospital(String login, String token, String name, String regon, String phone, String city, String street, String buildingNumber, String flatNumber, String zipCode) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("name", name)
+                    .put("REGON", regon)
+                    .put("phone", phone)
+                    .put("city", city)
+                    .put("street", street)
+                    .put("buildingNumber", buildingNumber)
+                    .put("flatNumber", flatNumber)
+                    .put("zipCode", zipCode);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/hospital/add";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/hospital/add";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -183,7 +207,8 @@ public class ClientTest {
         //help = test.login("kluski", "1234");
         //help = test.addPrescription("kluski", "45263ae3d04964189f2477ebabcdb283", "wcinaj pan", "2017-08-15", "Medicine1", 1, 1);
         //help = test.addDoctor("kluski", "1", "spe", "1234567898", "12345678913", "opo", "asd", "65", "em", "ci", "st", "bu", "fl", "11-111", "sexDoctor");
-        help = test.addMedicine("kluski", "1", "testomed", "dużo");
+        //help = test.addMedicine("kluski", "1", "testomed", "dużo");
+        help = test.addHospital("testo", "1", "na", "123456789", "ph", "ci", "st", "bu", "fl", "11-111");
         
         System.out.println(help);
     }
