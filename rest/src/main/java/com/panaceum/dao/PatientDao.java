@@ -147,7 +147,7 @@ public class PatientDao {
         Gson gson = new Gson();
         return Response.ok(gson.toJson(patient)).build();
     }
-    
+
     public Response add(User user, Patient patient) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
@@ -158,11 +158,7 @@ public class PatientDao {
 
         Statement statement;
         ResultSet resultSet;
-        /*System.err.println("SELECT addPatient('" + patient.getSex() + "', " + patient.getAge()
-                    + ", '" + patient.getBloodType() + "', '" + patient.getPesel() + "', '" + patient.getFirstName()
-                    + "', '" + patient.getLastName() + "', '" + patient.getPhone() + "', '" + patient.getEmail()
-                    + "', '" + patient.getCity() + "', '" + patient.getStreet() + "', '" + patient.getBuildingNumber()
-                    + "', '" + patient.getFlatNumber() + "', '" + patient.getZipCode() + "')");*/
+
         try {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
@@ -171,7 +167,7 @@ public class PatientDao {
                     + "', '" + patient.getLastName() + "', '" + patient.getPhone() + "', '" + patient.getEmail()
                     + "', '" + patient.getCity() + "', '" + patient.getStreet() + "', '" + patient.getBuildingNumber()
                     + "', '" + patient.getFlatNumber() + "', '" + patient.getZipCode() + "')");
-            
+
             while (resultSet.next()) {
                 patient.setId(resultSet.getInt(1));
             }
@@ -180,9 +176,9 @@ public class PatientDao {
             connection.closeConnection();
             return Response.serverError().build();
         }
-        
+
         connection.closeConnection();
-        
+
         if (patient.getId() == 0) {
             return Response.status(406).entity("Patient already exist in DB").build();
         }

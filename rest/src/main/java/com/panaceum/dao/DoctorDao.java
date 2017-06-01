@@ -7,6 +7,7 @@ import com.panaceum.model.User;
 import com.panaceum.model.Prescription;
 import com.panaceum.util.DatabaseConnection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -212,4 +213,49 @@ public class DoctorDao {
         Gson gson = new Gson();
         return Response.ok(gson.toJson(prescriptions)).build();
     }
+    
+    public Response add(User user, Doctor doctor) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("doctor")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT addDoctor('" + doctor.getSpeciality() + "', '" + doctor.getLicenceNumber()
+                    + "', '" + doctor.getPesel() + "', '" + doctor.getFirstName() + "', '" + doctor.getLastName()
+                    + "', '" + doctor.getPhone() + "', '" + doctor.getEmail() + "', '" + doctor.getCity()
+                    + "', '" + doctor.getStreet() + "', '" + doctor.getBuildingNumber() + "', '" + doctor.getFlatNumber()
+                    + "', '" + doctor.getZipCode() + "', '" + doctor.getLogin() +"')");
+
+            while (resultSet.next()) {System.err.println("to");
+                String result = resultSet.getString(1);System.err.println(result);System.err.println(result.length());
+                doctor.setId(Integer.parseInt(result.substring(1, result.indexOf(","))));System.err.println(result.indexOf(",") + 1);System.err.println(result.indexOf(")"));
+                System.err.println(result.substring(result.indexOf(",") + 1, result.indexOf(")")));
+                doctor.setPassword(result.substring(result.indexOf(",") + 1, result.indexOf(")")));System.err.println(doctor.getPassword());
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            
+            if (ex.toString().contains("login")) return Response.status(406).entity("Login already exist in DB").build();
+            return Response.serverError().build();
+        }
+        
+        connection.closeConnection();
+        
+        if (doctor.getId() == 0) {
+            return Response.status(406).entity("Doctor already exist in DB").build();
+        }
+
+        return Response.ok("{\"doctorId\":" + doctor.getId()
+                + ", \"login\":'" + doctor.getLogin() + "', \"password\":'" + doctor.getPassword() + "'}").build();
+    }
+    
 }

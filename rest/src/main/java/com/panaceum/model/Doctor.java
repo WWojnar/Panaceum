@@ -21,6 +21,7 @@ public class Doctor {
     private String zipCode;
     private int userId;
     private String login;
+    private String password;
 
     public int getId() {
         return id;
@@ -148,6 +149,14 @@ public class Doctor {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
     
 }
