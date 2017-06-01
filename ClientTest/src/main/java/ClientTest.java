@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,7 +9,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 public class ClientTest {
-    
+
     private String dataTransfer(JSONObject json, String url_address) {
         String print_returned = "";
 
@@ -48,8 +49,8 @@ public class ClientTest {
         JSONObject json = null;
         try {
             json = new JSONObject()
-                            .put("login", login)
-                            .put("password", passwd);
+                    .put("login", login)
+                    .put("password", passwd);
         } catch (JSONException e) {
             return "Klient: Blad przy tworzeniu JSONa";
         }
@@ -59,24 +60,24 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
-    
+
     private String login(String login, String passwd) {
         JSONObject json = null;
         try {
             json = new JSONObject()
-                            .put("login", login)
-                            .put("password", passwd);
+                    .put("login", login)
+                    .put("password", passwd);
         } catch (JSONException e) {
             return "Klient: Blad przy tworzeniu JSONa";
         }
 
         //String url = "http://localhost:8084/Panaceum/user/login";
         String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/user/login";
-        
+
         return dataTransfer(json, url);
     }
-	
-	private String addPrescription(String login, String token, String dosage, String expiryDate,
+
+    private String addPrescription(String login, String token, String dosage, String expiryDate,
             String medicineName, int doctorId, int patientId) {
         JSONObject json = null;
         try {
@@ -97,16 +98,75 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String addPatient(String login, String token, String sex, int age, String bloodType, String pesel, String firstName, String lastName, String phone, String email, String city, String street, String buildingNumber, String flatNumber, String zipCode) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("sex", sex)
+                    .put("age", age)
+                    .put("bloodType", bloodType)
+                    .put("pesel", pesel)
+                    .put("firstName", firstName)
+                    .put("lastName", lastName)
+                    .put("phone", phone)
+                    .put("email", email)
+                    .put("city", city)
+                    .put("street", street)
+                    .put("buildingNumber", buildingNumber)
+                    .put("flatNumber", flatNumber)
+                    .put("zipCode", zipCode);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/patient/add";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/patient/add";
+
+        return dataTransfer(json, url);
+    }
+    
+    private String addDoctor(String login, String token, String speciality, String licenceNumber, String pesel, String firstName, String lastName, String phone, String email, String city, String street, String buildingNumber, String flatNumber, String zipCode, String doctorLogin) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("speciality", speciality)
+                    .put("licenceNumber", licenceNumber)
+                    .put("pesel", pesel)
+                    .put("firstName", firstName)
+                    .put("lastName", lastName)
+                    .put("phone", phone)
+                    .put("email", email)
+                    .put("city", city)
+                    .put("street", street)
+                    .put("buildingNumber", buildingNumber)
+                    .put("flatNumber", flatNumber)
+                    .put("zipCode", zipCode)
+                    .put("doctorLogin", doctorLogin);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/doctor/add";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/doctor/add";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
         String help = "";
 
         //help = test.register("kluski", "1234");
-        help = test.login("kluski", "1234");
-		help = test.addPrescription("kluski", "45263ae3d04964189f2477ebabcdb283", "wcinaj pan", "2017-08-15", "Medicine1", 1, 1);
-		
+        //help = test.login("kluski", "1234");
+        //help = test.addPrescription("kluski", "45263ae3d04964189f2477ebabcdb283", "wcinaj pan", "2017-08-15", "Medicine1", 1, 1);
+        help = test.addDoctor("kluski", "1", "spe", "1234567898", "12345678913", "opo", "asd", "65", "em", "ci", "st", "bu", "fl", "11-111", "sexDoctor");
+        
         System.out.println(help);
     }
-    
+
 }
