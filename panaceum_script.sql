@@ -36,6 +36,45 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION addDoctor(_speciality character varying, _licenceNumber character varying, _pesel character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character, _login character varying) RETURNS TABLE (doctorId integer, password character varying(32)) 
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+	DECLARE _userId integer;
+	DECLARE zero integer;
+	DECLARE vc character varying(32);
+BEGIN
+	zero := 0;
+	vc := 'NaN';
+	IF 0 = (SELECT COUNT(*) FROM doctor WHERE licenceNumber = _licenceNumber) THEN
+		INSERT INTO doctor (
+			speciality,
+			licenceNumber,
+			pesel)
+		VALUES (
+			_speciality,
+			_licenceNumber,
+			(SELECT addPerson(_pesel, _firstName, _lastName, _phone, _email, _city, _street, _buildingNumber, _flatNumber, _zipCode))) RETURNING id INTO ret;
+		
+		INSERT INTO tUser (
+			login,
+			password,
+			privileges)
+		VALUES (
+			_login,
+			substring(md5(_login || random()::character varying(32)) from 1 for 8),
+			'doctor') RETURNING id INTO _userId;
+		
+		UPDATE person
+		SET tUserId = _userId
+		WHERE pesel = _pesel;
+		
+		RETURN QUERY SELECT doctorView.doctorId, doctorView.password FROM doctorView WHERE pesel = _pesel;
+	ELSE RETURN QUERY SELECT zero, vc;
+	END IF;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION addPatient(_sex sex, _age integer, _bloodType character, _pesel character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer 
 	LANGUAGE plpgsql
     AS $$
