@@ -254,7 +254,7 @@ public class DoctorDao {
         }
 
         return Response.ok("{\"doctorId\":" + doctor.getId()
-                + ", \"login\":'" + doctor.getLogin() + "', \"password\":'" + doctor.getPassword() + "'}").build();
+                + ", \"login\":\"" + doctor.getLogin() + "\", \"password\":\"" + doctor.getPassword() + "\"}").build();
     }
     
 }
