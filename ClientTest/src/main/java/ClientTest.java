@@ -198,6 +198,76 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String addHistory(String login, String token, int patientId, int doctorId, int hospitalId,
+            String nurseCard, String finalCard, String pressure, String pulse, float temperature, float mass,
+            float height, String content, String idc10, boolean firstIllnes, String symptoms, String recognition,
+            String treatment, boolean[] factor, String factor5Note, String factor6Note, String factor7Note, String notepad) {
+        JSONObject json = null;
+        try {System.err.println(factor5Note + "\n" + factor6Note + "\n" + factor7Note);
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("patientId", patientId)
+                    .put("doctorId", doctorId)
+                    .put("hospitalId", hospitalId)
+                    .put("nurseCard", nurseCard)
+                    .put("finalCard", finalCard)
+                    .put("pressure", pressure)
+                    .put("pulse", pulse)
+                    .put("temperature", temperature)
+                    .put("mass", mass)
+                    .put("height", height)
+                    .put("content", content)
+                    .put("idc10", idc10)
+                    .put("firstIllnes", firstIllnes)
+                    .put("symptoms", symptoms)
+                    .put("interviewRecognition", recognition)
+                    .put("treatment", treatment)
+                    .put("factor1", factor[0])
+                    .put("factor2", factor[1])
+                    .put("factor3", factor[2])
+                    .put("factor4", factor[3])
+                    .put("factor5", factor[4])
+                    .put("factor5Note", factor5Note)
+                    .put("factor6", factor[5])
+                    .put("factor6Note", factor6Note)
+                    .put("factor7", factor[6])
+                    .put("factor7Note", factor7Note)
+                    .put("factor8", factor[7])
+                    .put("factor9", factor[8])
+                    .put("factor10", factor[9])
+                    .put("factor11", factor[10])
+                    .put("factor12", factor[11])
+                    .put("factor13", factor[12])
+                    .put("factor14", factor[13])
+                    .put("factor15", factor[14])
+                    .put("factor16", factor[15])
+                    .put("factor17", factor[16])
+                    .put("factor18", factor[17])
+                    .put("factor19", factor[18])
+                    .put("factor20", factor[19])
+                    .put("factor21", factor[20])
+                    .put("factor22", factor[21])
+                    .put("factor23", factor[22])
+                    .put("factor24", factor[23])
+                    .put("factor25", factor[24])
+                    .put("factor26", factor[25])
+                    .put("factor27", factor[26])
+                    .put("factor28", factor[27])
+                    .put("factor29", factor[28])
+                    .put("factor30", factor[29])
+                    .put("notepad", notepad);
+            System.err.println(json);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/patient/addHistory";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/patient/addHistory";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -208,7 +278,9 @@ public class ClientTest {
         //help = test.addPrescription("kluski", "45263ae3d04964189f2477ebabcdb283", "wcinaj pan", "2017-08-15", "Medicine1", 1, 1);
         //help = test.addDoctor("kluski", "1", "spe", "1234567898", "12345678913", "opo", "asd", "65", "em", "ci", "st", "bu", "fl", "11-111", "sexDoctor");
         //help = test.addMedicine("kluski", "1", "testomed", "dużo");
-        help = test.addHospital("testo", "1", "na", "123456789", "ph", "ci", "st", "bu", "fl", "11-111");
+        //help = test.addHospital("testo", "1", "na", "123456789", "ph", "ci", "st", "bu", "fl", "11-111");
+        boolean[] factors = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
+        help = test.addHistory("kluski", "1", 1, 1, 1, "", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
         
         System.out.println(help);
     }
