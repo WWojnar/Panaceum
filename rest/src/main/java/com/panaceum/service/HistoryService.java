@@ -19,14 +19,14 @@ public class HistoryService {
     private TherapyPlanDao therapyPlanDao = new TherapyPlanDao();
     
     @GET
-    @Path("/getTherapyPlans/{login}/{token}")
+    @Path("/getTherapyPlans/{historyId}/{login}/{token}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("login") String login, @PathParam("token") String token) {
+    public Response getAll(@PathParam("historyId") int historyId, @PathParam("login") String login, @PathParam("token") String token) {
         User user = new User();
         user.setLogin(login);
         user.setToken(token);
         
-        return therapyPlanDao.getAll(user);
+        return therapyPlanDao.getAll(user, historyId);
     }
     
 }

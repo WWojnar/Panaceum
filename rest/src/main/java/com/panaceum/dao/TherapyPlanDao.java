@@ -16,7 +16,7 @@ public class TherapyPlanDao {
     private static DatabaseConnection connection = new DatabaseConnection();
     private UserDao userDao = new UserDao();
     
-    public Response getAll(User user) {
+    public Response getAll(User user, int historyId) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
         }
@@ -31,7 +31,7 @@ public class TherapyPlanDao {
         try {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM therapyPlan");
+            resultSet = statement.executeQuery("SELECT * FROM therapyPlan WHERE historyId = " + historyId);
 
             while (resultSet.next()) {
                 TherapyPlan therapyPlan = new TherapyPlan();
