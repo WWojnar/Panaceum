@@ -6,6 +6,7 @@ import com.panaceum.model.Patient;
 import com.panaceum.model.User;
 import com.panaceum.util.DatabaseConnection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +110,50 @@ public class HistoryDao {
 
         Gson gson = new Gson();
         return Response.ok(gson.toJson(histories)).build();
+    }
+    
+    public Response add(User user, History history) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("doctor")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT addHistory(" + history.getPatientId() + ", " + history.getDoctorId()
+                    + ", " + history.getHospitalId() + ", '" + history.getNurseCard() + "', '" + history.getFinalCard()
+                    + "', '" + history.getPressure() + "', '" + history.getPulse() + "', " + history.getTemperature()
+                    + ", " + history.getMass() + ", " + history.getHeight() + ", '" + history.getContent()
+                    + "', '" + history.getIdc10() + "', " + history.isFirstIllnes() + ", '" + history.getSymptoms()
+                    + "', '" + history.getInterviewRecognition() + "', '" + history.getTreatment() + "', " + history.isFactor1()
+                    + ", " + history.isFactor2() + ", " + history.isFactor3() + ", " + history.isFactor4() + ", " + history.isFactor5()
+                    + ", '" + history.getFactor5Note() + "', " + history.isFactor6() + ", '" + history.getFactor6Note()
+                    + "', " + history.isFactor7() + ", '" + history.getFactor7Note() + "', " + history.isFactor8()
+                    + ", " + history.isFactor9() + ", " + history.isFactor10() + ", " + history.isFactor11() + ", " + history.isFactor12()
+                    + ", " + history.isFactor13() + ", " + history.isFactor14() + ", " + history.isFactor15() + ", " + history.isFactor16()
+                    + ", " + history.isFactor17() + ", " + history.isFactor18() + ", " + history.isFactor19() + ", " + history.isFactor20()
+                    + ", " + history.isFactor21() + ", " + history.isFactor22() + ", " + history.isFactor23() + ", " + history.isFactor24()
+                    + ", " + history.isFactor25() + ", " + history.isFactor26() + ", " + history.isFactor27() + ", " + history.isFactor28()
+                    + ", " + history.isFactor29() + ", " + history.isFactor30() + ", '" + history.getNotepad() + "')");
+
+            while (resultSet.next()) {
+                history.setId(resultSet.getInt(1));
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+
+        connection.closeConnection();
+
+        return Response.ok("{\"historyId\":" + history.getId() + "}").build();
     }
     
 }

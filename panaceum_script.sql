@@ -75,6 +75,78 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION addHistory(_patientId integer, _doctorId integer, _hospitalId integer, _nurseCard text, _finalCard text, _pressure character varying, _pulse character varying, _temperature float, _mass float, _height float, _content text, _idc10 character, _firstIllnes boolean, _symptoms text, _interviewRecognition text, _treatment text, _factor1 boolean, _factor2 boolean, _factor3 boolean, _factor4 boolean, _factor5 boolean, _factor5Note character varying, _factor6 boolean, _factor6Note character varying, _factor7 boolean, _factor7Note character varying, _factor8 boolean, _factor9 boolean, _factor10 boolean, _factor11 boolean, _factor12 boolean, _factor13 boolean, _factor14 boolean, _factor15 boolean, _factor16 boolean, _factor17 boolean, _factor18 boolean, _factor19 boolean, _factor20 boolean, _factor21 boolean, _factor22 boolean, _factor23 boolean, _factor24 boolean, _factor25 boolean, _factor26 boolean, _factor27 boolean, _factor28 boolean, _factor29 boolean, _factor30 boolean, _notepad text) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+	DECLARE _firstExaminationId integer;
+	DECLARE _interviewId integer;
+	DECLARE _infectionCardId integer;
+BEGIN
+	INSERT INTO firstExamination (
+		pressure,
+		pulse,
+		temperature,
+		mass,
+		height,
+		content)
+	VALUES (
+		_pressure,
+		_pulse,
+		_temperature,
+		_mass,
+		_height,
+		_content) RETURNING id INTO _firstExaminationId;
+		
+	INSERT INTO interview (
+		interviewDate,
+		idc10,
+		firstIllnes,
+		symptoms,
+		recognition,
+		treatment)
+	VALUES (
+		now(),
+		_idc10,
+		_firstIllnes,
+		_symptoms,
+		_interviewRecognition,
+		_treatment) RETURNING id INTO _interviewId;
+	
+	INSERT INTO infectionCard (
+		factor1, factor2, factor3, factor4, factor5, factor6, factor7, factor8, factor9, factor10,
+		factor11, factor12, factor13, factor14, factor15, factor16, factor17, factor18, factor19, factor20,
+		factor21, factor22, factor23, factor24, factor25, factor26, factor27, factor28, factor29, factor30,
+		factor5Note, factor6Note, factor7Note, notepad)
+	VALUES (
+		_factor1, _factor2, _factor3, _factor4, _factor5, _factor6, _factor7, _factor8, _factor9, _factor10,
+		_factor11, _factor12, _factor13, _factor14, _factor15, _factor16, _factor17, _factor18, _factor19, _factor20,
+		_factor21, _factor22, _factor23, _factor24, _factor25, _factor26, _factor27, _factor28, _factor29, _factor30,
+		_factor5Note, _factor6Note, _factor7Note, _notepad) RETURNING id INTO _infectionCardId;
+	
+	INSERT INTO history (
+		nurseCard,
+		finalCard,
+		patientId,
+		doctorId,
+		hospitalId,
+		interviewId,
+		firstExaminationId,
+		infectionCardid)
+	VALUES (
+		_nurseCard,
+		_finalCard,
+		_patientId,
+		_doctorId,
+		_hospitalId,
+		_interviewId,
+		_firstExaminationId,
+		_infectionCardId) RETURNING id INTO ret;
+		
+	RETURN ret;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION addHospital(_name character varying, _regon character, _phone character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer
 	LANGUAGE plpgsql
     AS $$
