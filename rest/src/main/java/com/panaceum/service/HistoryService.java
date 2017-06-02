@@ -1,6 +1,9 @@
 package com.panaceum.service;
 
 import com.panaceum.dao.HistoryDao;
+import com.panaceum.dao.TherapyPlanDao;
+import com.panaceum.model.TherapyPlan;
+import com.panaceum.model.User;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,14 +16,17 @@ import javax.ws.rs.core.Response;
 @Path("/history")
 public class HistoryService {
     
-    private HistoryDao historyDao = new HistoryDao();
+    private TherapyPlanDao therapyPlanDao = new TherapyPlanDao();
     
-    @POST
-    @Path("/test")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("/getTherapyPlans/{login}/{token}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(String incomingData) {
-        return Response.ok().entity("[{\"id\":1,\"age\":0,\"pesel\":\"55555555555\",\"firstName\":\"Pacjent\",\"lastName\":\"NumerJeden\",\"addressId\":0},{\"id\":2,\"age\":0,\"pesel\":\"123231322\",\"firstName\":\"Pacjent\",\"lastName\":\"NumerDwa\",\"addressId\":0}]").build();
+    public Response getAll(@PathParam("login") String login, @PathParam("token") String token) {
+        User user = new User();
+        user.setLogin(login);
+        user.setToken(token);
+        
+        return therapyPlanDao.getAll(user);
     }
     
 }
