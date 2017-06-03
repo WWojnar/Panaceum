@@ -377,6 +377,22 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION updateDoctor(_login character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS void
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE _pesel character(11);
+	DECLARE _addressId integer;
+BEGIN
+	_pesel := (SELECT pesel FROM doctorView WHERE login = _login);
+	UPDATE person
+	SET phone = _phone,
+		email = _email
+	WHERE pesel = _pesel;
+	_addressId := (SELECT addressId FROM person WHERE pesel = _pesel);
+	PERFORM updateAddress(_addressId , _city, _street, _buildingNumber, _flatNumber, _zipCode);
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION updatePassword(_login character varying, _passwd character varying) RETURNS void
 	LANGUAGE plpgsql
 	AS $$

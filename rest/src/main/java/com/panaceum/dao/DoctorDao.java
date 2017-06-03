@@ -257,4 +257,28 @@ public class DoctorDao {
                 + ", \"login\":\"" + doctor.getLogin() + "\", \"password\":\"" + doctor.getPassword() + "\"}").build();
     }
     
+    public Response update(User user, Doctor doctor) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT updateDoctor('" + doctor.getLogin() + "', '" + doctor.getPhone() + "', '" + doctor.getEmail() + "', '" + doctor.getCity()
+                    + "', '" + doctor.getStreet() + "', '" + doctor.getBuildingNumber() + "', '" + doctor.getFlatNumber()
+                    + "', '" + doctor.getZipCode() + "')");
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        
+        connection.closeConnection();
+        return Response.ok().build();
+    }
+    
 }

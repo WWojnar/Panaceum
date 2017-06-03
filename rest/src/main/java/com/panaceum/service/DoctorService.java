@@ -120,5 +120,56 @@ public class DoctorService {
         
         return doctorDao.add(user, doctor);
     }
+    
+    @POST
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(String incomingData) {
+        User user = new User();
+        Doctor doctor = new Doctor();
+        
+        String login,
+                token,
+                phone,
+                email,
+                city,
+                street,
+                buildingNumber,
+                flatNumber,
+                zipCode;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+            phone = json.getString("phone");
+            email = json.getString("email");
+            city = json.getString("city");
+            street = json.getString("street");
+            buildingNumber = json.getString("buildingNumber");
+            flatNumber = json.getString("flatNumber");
+            zipCode = json.getString("zipCode");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        doctor.setPhone(phone);
+        doctor.setEmail(email);
+        doctor.setCity(city);
+        doctor.setStreet(street);
+        doctor.setBuildingNumber(buildingNumber);
+        doctor.setFlatNumber(flatNumber);
+        doctor.setZipCode(zipCode);
+        
+        return doctorDao.update(user, doctor);
+    }
 
 }
