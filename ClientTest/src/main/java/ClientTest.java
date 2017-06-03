@@ -268,6 +268,25 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String addTherapyPlan(String login, String token, String examination, String orders, int historyId) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("examination", examination)
+                    .put("orders", orders)
+                    .put("historyId", historyId);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/history/addTherapyPlan";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/addTherapyPlan";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -280,7 +299,8 @@ public class ClientTest {
         //help = test.addMedicine("kluski", "1", "testomed", "dużo");
         //help = test.addHospital("testo", "1", "na", "123456789", "ph", "ci", "st", "bu", "fl", "11-111");
         boolean[] factors = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
-        help = test.addHistory("kluski", "1", 1, 1, 1, "", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
+        //help = test.addHistory("kluski", "1", 1, 1, 1, "", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
+        help = test.addTherapyPlan("kluski", "1", "examination", "orders", 1);
         
         System.out.println(help);
     }
