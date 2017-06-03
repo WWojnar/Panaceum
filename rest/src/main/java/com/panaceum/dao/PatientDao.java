@@ -185,5 +185,44 @@ public class PatientDao {
 
         return Response.ok("{\"patientId\":" + patient.getId() + "}").build();
     }
+    
+    public Response update(User user, Patient patient) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("doctor")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+        int result = 0;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT updatePatient(" + patient.getId() + ", '" + patient.getSex() + "', " + patient.getAge()
+                    + ", '" + patient.getBloodType() + "', '" + patient.getFirstName()
+                    + "', '" + patient.getLastName() + "', '" + patient.getPhone() + "', '" + patient.getEmail()
+                    + "', '" + patient.getCity() + "', '" + patient.getStreet() + "', '" + patient.getBuildingNumber()
+                    + "', '" + patient.getFlatNumber() + "', '" + patient.getZipCode() + "')");
+            
+            while (resultSet.next()) {
+                result = resultSet.getInt(1);
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+
+        connection.closeConnection();
+
+        if (result == 0) {
+            return Response.status(404).entity("No such patient").build();
+        }
+
+        return Response.ok().build();
+    }
 
 }

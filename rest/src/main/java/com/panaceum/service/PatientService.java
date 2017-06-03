@@ -262,4 +262,73 @@ public class PatientService {
         return historyDao.add(user, history);
     }
     
+    @POST
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(String incomingData) {
+        User user = new User();
+        Patient patient = new Patient();
+        
+        String login,
+                token;
+        int patientId;
+        String sex;
+        int age;
+        String bloodType,
+                firstName,
+                lastName,
+                phone,
+                email,
+                city,
+                street,
+                buildingNumber,
+                flatNumber,
+                zipCode;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+            patientId = json.getInt("patientId");
+            sex = json.getString("sex");
+            age = json.getInt("age");
+            bloodType = json.getString("bloodType");
+            firstName = json.getString("firstName");
+            lastName = json.getString("lastName");
+            phone = json.getString("phone");
+            email = json.getString("email");
+            city = json.getString("city");
+            street = json.getString("street");
+            buildingNumber = json.getString("buildingNumber");
+            flatNumber = json.getString("flatNumber");
+            zipCode = json.getString("zipCode");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        patient.setId(patientId);
+        patient.setSex(sex);
+        patient.setAge(age);
+        patient.setBloodType(bloodType);
+        patient.setFirstName(firstName);
+        patient.setLastName(lastName);
+        patient.setPhone(phone);
+        patient.setEmail(email);
+        patient.setCity(city);
+        patient.setStreet(street);
+        patient.setBuildingNumber(buildingNumber);
+        patient.setFlatNumber(flatNumber);
+        patient.setZipCode(zipCode);
+        
+        return patientDao.update(user, patient);
+    }
+    
 }
