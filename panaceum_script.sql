@@ -363,6 +363,16 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION updatePassword(_login character varying, _passwd character varying) RETURNS void
+	LANGUAGE plpgsql
+	AS $$
+BEGIN
+	UPDATE tuser
+	SET password = _passwd
+	WHERE login = _login;
+END;
+$$;
+
 CREATE FUNCTION validate(_login character varying, _token character) RETURNS boolean
     LANGUAGE plpgsql
     AS $$

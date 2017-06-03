@@ -11,8 +11,6 @@ import com.panaceum.util.DatabaseConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class UserDao {
 
@@ -125,7 +123,7 @@ public class UserDao {
     public Response login(User user) {
         Statement statement;
         ResultSet resultSet;
-System.err.println("to");
+
         int doctorId = 0;
 
         try {
@@ -166,6 +164,30 @@ System.err.println("to");
         } else {
             return Response.ok("{\"userId\":" + user.getId() + ",\"doctorId\":" + doctorId + ",\"token\":\"" + user.getToken() + "\"}").build();
         }
+    }
+    
+    public Response updatePassword(User user) {
+        if (!this.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT updatePassword('" + user.getLogin()
+                    + "', '" + user.getPassword() + "')");
+        } catch (Exception e) {
+            System.err.println(e.toString());
+            connection.closeConnection();
+
+            return Response.serverError().build();
+        }
+
+        connection.closeConnection();
+        return Response.ok().build();
     }
 
 }

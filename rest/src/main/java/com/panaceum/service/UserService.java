@@ -93,11 +93,43 @@ public class UserService {
             System.out.println(e.toString());
             return Response.serverError().entity("Unkown error").build();
         }
-System.err.println("tu");
+
         user.setLogin(login);
         user.setPassword(passwd);
 
         return userDao.login(user);
+    }
+    
+    @POST
+    @Path("/updatePassword")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updatePassword(String incomingData) {
+        User user = new User();
+
+        String login,
+                token,
+                password;
+
+        try {
+            JSONObject json = new JSONObject(incomingData);
+
+            login = json.getString("login");
+            token = json.getString("token");
+            password = json.getString("newPassword");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+
+        user.setLogin(login);
+        user.setToken(token);
+        user.setPassword(password);
+
+        return userDao.updatePassword(user);
     }
 
 }
