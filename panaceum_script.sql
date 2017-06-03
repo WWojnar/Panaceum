@@ -363,6 +363,20 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION updateAddress(_id integer, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS void
+	LANGUAGE plpgsql
+    AS $$
+BEGIN
+	UPDATE address
+	SET city = _city,
+		street = _street,
+		buildingNumber = _buildingNumber,
+		flatNumber = _flatNumber,
+		zipCode = _zipCode
+	WHERE id = _id;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION updatePassword(_login character varying, _passwd character varying) RETURNS void
 	LANGUAGE plpgsql
 	AS $$
@@ -370,6 +384,41 @@ BEGIN
 	UPDATE tuser
 	SET password = _passwd
 	WHERE login = _login;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION updatePatient(_patientId integer, _sex sex, _age integer, _bloodType character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer 
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE _pesel character(11);
+BEGIN
+	IF 0 != (SELECT COUNT(*) FROM patient WHERE id = _patientId) THEN
+		UPDATE patient
+		SET sex = _sex,
+			age = _age,
+			bloodType = _bloodType
+		WHERE id = _patientId;
+		_pesel := (SELECT pesel FROM patient WHERE id = _patientId);
+		PERFORM updatePerson(_pesel, _firstName, _lastName, _phone, _email, _city, _street, _buildingNumber, _flatNumber, _zipCode);
+		RETURN 1;
+	ELSE RETURN 0;
+	END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION updatePerson(_pesel character, _firstName character varying, _lastName character varying, _phone character varying, _email character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS void
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE _addressId integer;
+BEGIN
+	UPDATE person
+	SET firstName = _firstName,
+		lastName = _lastName,
+		phone = _lastName,
+		email = _email
+	WHERE pesel = _pesel;
+	_addressId := (SELECT addressId FROM person WHERE pesel = _pesel);
+	PERFORM updateAddress(_addressId , _city, _street, _buildingNumber, _flatNumber, _zipCode);
 END;
 $$;
 
