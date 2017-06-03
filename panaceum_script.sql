@@ -629,8 +629,18 @@ CREATE VIEW doctorView AS
 		JOIN person ON doctor.pesel = person.pesel
 		JOIN address ON person.addressId = address.id
 		JOIN tUser ON person.tUserId = tUser.id;
+		
+CREATE OR REPLACE VIEW excerptView AS
+	SELECT excerpt.id,
+		excerptDate,
+		recognition,
+		recomendations,
+		epicrisis,
+		history.id AS historyid
+	FROM excerpt
+		JOIN history ON excerpt.id = history.excerptId;
 
-CREATE OR REPLACE VIEW historyview AS 
+CREATE OR REPLACE VIEW historyView AS 
 	SELECT history.id AS historyid,
 		history.nursecard,
 		history.finalcard,
