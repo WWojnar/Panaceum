@@ -261,6 +261,23 @@ END;
 $BODY$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION addTherapyPlan(_examination text, _orders text, _historyId integer) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+BEGIN
+	INSERT INTO therapyPlan (
+		examination,
+		orders,
+		historyId)
+	VALUES (
+		_examination,
+		_orders,
+		_historyId) RETURNING id INTO ret;
+	RETURN ret;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION checkAddress(_city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer
 	LANGUAGE plpgsql
     AS $$
