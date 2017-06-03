@@ -404,7 +404,7 @@ BEGIN
 			regon = _regon,
 			phone = _phone
 		WHERE id = _hospitalId;
-		_addressId := (SELECT addressId FROM hospital WHERE id = hospitalId);
+		_addressId := (SELECT addressId FROM hospital WHERE id = _hospitalId);
 		PERFORM updateAddress(_addressId , _city, _street, _buildingNumber, _flatNumber, _zipCode);
 		RETURN 1;
 	ELSE RETURN 0;
