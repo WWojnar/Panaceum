@@ -104,6 +104,10 @@ public class TherapyPlanDao {
         }
         
         connection.closeConnection();
+        
+        if (therapyPlan.getId() == 0) {
+            return Response.status(404).entity("No such medical history").build();
+        }
 
         return Response.ok("{\"therapyPlanId\":" + therapyPlan.getId() + "}").build();
     }
