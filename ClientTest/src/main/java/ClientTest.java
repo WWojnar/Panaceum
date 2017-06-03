@@ -307,6 +307,23 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String updatePassword(String login, String token, String password) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("newPassword", password);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/user/updatePassword";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/addExcerpt";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -321,7 +338,8 @@ public class ClientTest {
         boolean[] factors = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
         //help = test.addHistory("kluski", "1", 1, 1, 1, "", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
         //help = test.addTherapyPlan("kluski", "1", "examination", "orders", 2);
-        help = test.addExcerpt("kluski", "1", "recognition", "recomendations", "epicrisis", 2);
+        //help = test.addExcerpt("kluski", "1", "recognition", "recomendations", "epicrisis", 2);
+        help = test.updatePassword("kluski", "1", "1234");
         
         System.out.println(help);
     }
