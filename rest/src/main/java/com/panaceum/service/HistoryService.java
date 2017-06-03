@@ -1,5 +1,6 @@
 package com.panaceum.service;
 
+import com.panaceum.dao.ExcerptDao;
 import com.panaceum.dao.HistoryDao;
 import com.panaceum.dao.TherapyPlanDao;
 import com.panaceum.model.TherapyPlan;
@@ -17,16 +18,28 @@ import javax.ws.rs.core.Response;
 public class HistoryService {
     
     private TherapyPlanDao therapyPlanDao = new TherapyPlanDao();
+    private ExcerptDao excerptDao = new ExcerptDao();
     
     @GET
     @Path("/getTherapyPlans/{historyId}/{login}/{token}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("historyId") int historyId, @PathParam("login") String login, @PathParam("token") String token) {
+    public Response getTherapyPlans(@PathParam("historyId") int historyId, @PathParam("login") String login, @PathParam("token") String token) {
         User user = new User();
         user.setLogin(login);
         user.setToken(token);
         
-        return therapyPlanDao.getAll(user, historyId);
+        return therapyPlanDao.getAllByHistoryId(user, historyId);
+    }
+    
+    @GET
+    @Path("/getExcerpt/{historyId}/{login}/{token}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getExcerpt(@PathParam("historyId") int historyId, @PathParam("login") String login, @PathParam("token") String token) {
+        User user = new User();
+        user.setLogin(login);
+        user.setToken(token);
+        
+        return excerptDao.getByHistoryId(user, historyId);
     }
     
 }
