@@ -393,6 +393,25 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION updateHospital(_hospitalId integer, _name character varying, _regon character, _phone character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE _addressId integer;
+BEGIN
+	IF 0 != (SELECT COUNT(*) FROM hospital WHERE id = _hospitalId) THEN
+		UPDATE hospital
+		SET name = _name,
+			regon = _regon,
+			phone = _phone
+		WHERE id = _hospitalId;
+		_addressId := (SELECT addressId FROM hospital WHERE id = hospitalId);
+		PERFORM updateAddress(_addressId , _city, _street, _buildingNumber, _flatNumber, _zipCode);
+		RETURN 1;
+	ELSE RETURN 0;
+	END IF;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION updatePassword(_login character varying, _passwd character varying) RETURNS void
 	LANGUAGE plpgsql
 	AS $$

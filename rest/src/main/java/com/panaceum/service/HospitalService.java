@@ -79,5 +79,62 @@ public class HospitalService {
         
         return hospitalDao.add(user, hospital);
     }
+    
+    @POST
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(String incomingData) {
+        User user = new User();
+        Hospital hospital = new Hospital();
+        
+        String login,
+                token;
+        int hospitalId;
+        String name,
+                regon,
+                phone,
+                city,
+                street,
+                buildingNumber,
+                flatNumber,
+                zipCode;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+            hospitalId = json.getInt("hospitalId");
+            name = json.getString("name");
+            regon = json.getString("REGON");
+            phone = json.getString("phone");
+            city = json.getString("city");
+            street = json.getString("street");
+            buildingNumber = json.getString("buildingNumber");
+            flatNumber = json.getString("flatNumber");
+            zipCode = json.getString("zipCode");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        hospital.setId(hospitalId);
+        hospital.setName(name);
+        hospital.setRegon(regon);
+        hospital.setPhone(phone);
+        hospital.setCity(city);
+        hospital.setStreet(street);
+        hospital.setBuildingNumber(buildingNumber);
+        hospital.setFlatNumber(flatNumber);
+        hospital.setZipCode(zipCode);
+        
+        return hospitalDao.update(user, hospital);
+    }
 
 }

@@ -86,4 +86,40 @@ public class HospitalDao {
         return Response.ok("{\"hospitalId\":" + hospital.getId() + "}").build();
     }
     
+    public Response update(User user, Hospital hospital) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("admin")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT updateHospital(" + hospital.getId() + ", '" + hospital.getName() + "', '" + hospital.getRegon()
+                    + "', '" + hospital.getPhone() + "', '" + hospital.getCity() + "', '" + hospital.getStreet() + "', '" + hospital.getBuildingNumber()
+                    + "', '" + hospital.getFlatNumber() + "', '" + hospital.getZipCode() + "')");
+
+            while (resultSet.next()) {
+                hospital.setId(resultSet.getInt(1));
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+
+        connection.closeConnection();
+
+        if (hospital.getId() == 0) {
+            return Response.status(404).entity("No such hospital").build();
+        }
+
+        return Response.ok().build();
+    }
+    
 }
