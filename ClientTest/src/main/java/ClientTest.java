@@ -324,6 +324,35 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String updatePatient(String login, String token, int patientId, String sex, int age, String bloodType, String firstName, String lastName, String phone, String email, String city, String street, String buildingNumber, String flatNumber, String zipCode) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("patientId", patientId)
+                    .put("sex", sex)
+                    .put("age", age)
+                    .put("bloodType", bloodType)
+                    .put("firstName", firstName)
+                    .put("lastName", lastName)
+                    .put("phone", phone)
+                    .put("email", email)
+                    .put("city", city)
+                    .put("street", street)
+                    .put("buildingNumber", buildingNumber)
+                    .put("flatNumber", flatNumber)
+                    .put("zipCode", zipCode);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/patient/update";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/patient/update";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -339,8 +368,9 @@ public class ClientTest {
         //help = test.addHistory("kluski", "1", 1, 1, 1, "", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
         //help = test.addTherapyPlan("kluski", "1", "examination", "orders", 2);
         //help = test.addExcerpt("kluski", "1", "recognition", "recomendations", "epicrisis", 2);
-        help = test.updatePassword("kluski", "1", "1234");
-        
+        //help = test.updatePassword("kluski", "1", "1234");
+        help = test.updatePatient("kluski", "1", 12, "male", 18, "A+", "Bob", "Bobo", "123456789", "email@email", "city", "street", "1", "1", "11-111");
+
         System.out.println(help);
     }
 
