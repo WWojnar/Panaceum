@@ -287,6 +287,26 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String addExcerpt(String login, String token, String recognition, String recomendations, String epicrisis, int historyId) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("recognition", recognition)
+                    .put("recomendations", recomendations)
+                    .put("epicrisis", epicrisis)
+                    .put("historyId", historyId);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/history/addExcerpt";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/addExcerpt";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -300,7 +320,8 @@ public class ClientTest {
         //help = test.addHospital("testo", "1", "na", "123456789", "ph", "ci", "st", "bu", "fl", "11-111");
         boolean[] factors = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
         //help = test.addHistory("kluski", "1", 1, 1, 1, "", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
-        help = test.addTherapyPlan("kluski", "1", "examination", "orders", 1);
+        //help = test.addTherapyPlan("kluski", "1", "examination", "orders", 2);
+        help = test.addExcerpt("kluski", "1", "recognition", "recomendations", "epicrisis", 2);
         
         System.out.println(help);
     }
