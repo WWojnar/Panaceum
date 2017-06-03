@@ -105,7 +105,7 @@ public class TherapyPlanDao {
         
         connection.closeConnection();
 
-        return Response.ok("{\"therapyPlanId\":" + therapyPlan.getId()).build();
+        return Response.ok("{\"therapyPlanId\":" + therapyPlan.getId() + "}").build();
     }
     
 }

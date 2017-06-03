@@ -112,7 +112,7 @@ public class MedicineDao {
             return Response.status(406).entity("Medicine already exist in DB").build();
         }
 
-        return Response.ok("{\"medicineId\":" + medicine.getId()).build();
+        return Response.ok("{\"medicineId\":" + medicine.getId() + "}").build();
     }
 
 }
