@@ -6,6 +6,7 @@ import com.panaceum.model.Prescription;
 import com.panaceum.model.User;
 import com.panaceum.util.DatabaseConnection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import javax.ws.rs.core.Response;
 
@@ -69,6 +70,45 @@ public class ExcerptDao {
 
         Gson gson = new Gson();
         return Response.ok(gson.toJson(excerpt)).build();
+    }
+    
+    public Response add(User user, Excerpt excerpt, int historyId) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("doctor")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT addExcerpt('" + excerpt.getRecognition()
+                    + "', '" + excerpt.getRecomendations() + "', '" + excerpt.getEpicrisis()
+                    + "', " + historyId + ")");
+
+            while (resultSet.next()) {
+                excerpt.setId(resultSet.getInt(1));
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        
+        connection.closeConnection();
+        
+        if (excerpt.getId() == -1) {
+            return Response.status(406).entity("Already exist excerpt for this medical history").build();
+        }
+        if (excerpt.getId() == 0) {
+            return Response.status(404).entity("No such medical history").build();
+        }
+
+        return Response.ok("{\"excerptId\":" + excerpt.getId() + "}").build();
     }
     
 }

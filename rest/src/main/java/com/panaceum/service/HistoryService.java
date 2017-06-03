@@ -3,6 +3,7 @@ package com.panaceum.service;
 import com.panaceum.dao.ExcerptDao;
 import com.panaceum.dao.HistoryDao;
 import com.panaceum.dao.TherapyPlanDao;
+import com.panaceum.model.Excerpt;
 import com.panaceum.model.TherapyPlan;
 import com.panaceum.model.User;
 import javax.ws.rs.Consumes;
@@ -81,6 +82,47 @@ public class HistoryService {
         therapyPlan.setHistoryId(historyId);
         
         return therapyPlanDao.add(user, therapyPlan);
+    }
+    
+    @POST
+    @Path("/addExcerpt")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addExcerpt(String incomingData) {
+        User user = new User();
+        Excerpt excerpt = new Excerpt();
+        
+        String login,
+                token,
+                recognition,
+                recomendations,
+                epicrisis;
+        int historyId;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+            recognition = json.getString("recognition");
+            recomendations = json.getString("recomendations");
+            epicrisis = json.getString("epicrisis");
+            historyId = json.getInt("historyId");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        excerpt.setRecognition(recognition);
+        excerpt.setRecomendations(recomendations);
+        excerpt.setEpicrisis(epicrisis);
+        
+        return excerptDao.add(user, excerpt, historyId);
     }
     
 }
