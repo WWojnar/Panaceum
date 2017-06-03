@@ -13,6 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 @Path("/history")
 public class HistoryService {
@@ -40,6 +42,45 @@ public class HistoryService {
         user.setToken(token);
         
         return excerptDao.getByHistoryId(user, historyId);
+    }
+    
+    @POST
+    @Path("/addTherapyPlan")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addTherapyPlan(String incomingData) {
+        User user = new User();
+        TherapyPlan therapyPlan = new TherapyPlan();
+        
+        String login,
+                token,
+                examinations,
+                orders;
+        int historyId;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+            examinations = json.getString("examination");
+            orders = json.getString("orders");
+            historyId = json.getInt("historyId");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        therapyPlan.setExaminations(examinations);
+        therapyPlan.setOrders(orders);
+        therapyPlan.setHistoryId(historyId);
+        
+        return therapyPlanDao.add(user, therapyPlan);
     }
     
 }
