@@ -16,7 +16,7 @@ public class TherapyPlanDao {
     private static DatabaseConnection connection = new DatabaseConnection();
     private UserDao userDao = new UserDao();
     
-    public Response getAll(User user, int historyId) {
+    public Response getAllByHistoryId(User user, int historyId) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
         }
