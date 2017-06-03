@@ -348,7 +348,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION register(_login character varying, _passwd character varying, _privileges privileges) RETURNS void
+CREATE OR REPLACE FUNCTION register(_login character varying, _passwd character varying) RETURNS void
 	LANGUAGE plpgsql
 	AS $$
 BEGIN
@@ -359,7 +359,7 @@ BEGIN
     VALUES (
         _login,
         _passwd,
-		_privileges);
+		'admin');
 END;
 $$;
 
