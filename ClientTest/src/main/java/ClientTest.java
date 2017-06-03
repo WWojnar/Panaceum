@@ -376,6 +376,31 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String updateHospital(String login, String token, int hospitalId, String name, String regon, String phone, String city, String street, String buildingNumber, String flatNumber, String zipCode) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("hospitalId", hospitalId)
+                    .put("name", name)
+                    .put("REGON", regon)
+                    .put("phone", phone)
+                    .put("city", city)
+                    .put("street", street)
+                    .put("buildingNumber", buildingNumber)
+                    .put("flatNumber", flatNumber)
+                    .put("zipCode", zipCode);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/hospital/update";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/hospital/update";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -393,7 +418,8 @@ public class ClientTest {
         //help = test.addExcerpt("kluski", "1", "recognition", "recomendations", "epicrisis", 2);
         //help = test.updatePassword("kluski", "1", "1234");
         //help = test.updatePatient("kluski", "1", 12, "male", 18, "A+", "Bob", "Bobo", "123456789", "email@email", "city", "street", "1", "1", "11-111");
-        help = test.updateDoctor("kluski", "1", "123456789", "email@email", "city", "street", "1", "1", "11-111");
+        //help = test.updateDoctor("kluski", "1", "123456789", "email@email", "city", "street", "1", "1", "11-111");
+        help = test.updateHospital("testo", "1", 3, "name", "123456789", "123456789", "city", "street", "1", "1", "11-111");
         
         System.out.println(help);
     }
