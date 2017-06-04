@@ -42,4 +42,30 @@ public class PrescriptionDao {
         connection.closeConnection();
         return Response.ok("{\"presriptionId\":" + prescription.getId() + "}").build();
     }
+    
+    public Response update(User user, Prescription prescription)  {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT updatePrescription('" + user.getLogin() + "', '" + user.getToken()
+                    + "', '" + prescription.getDosage() + "', '" + prescription.getExpiryDate() + "', '" + prescription.getMedicineName()
+                    + "', " + prescription.getDoctorid() + ", " + prescription.getPatientId() + ")");
+
+        } catch (Exception e) {
+            System.err.println(e.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        
+        connection.closeConnection();
+        return Response.ok().build();
+    }
+
 }

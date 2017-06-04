@@ -76,5 +76,65 @@ public class MedicineService {
         
         return medicineDao.add(user, medicine);
     }
+ 
+    @POST
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(String incomingData) {
+        User user = new User();
+        Medicine medicine = new Medicine();
+             
+        String	name,
+                activeSubstance;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            name = json.getString("name");
+            activeSubstance = json.getString("activeSubstance");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        medicine.setName(name);
+        medicine.setActiveSubstance(activeSubstance);
+        
+        return medicineDao.update(user, medicine);
+    }
+    
+    @POST
+    @Path("/delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(String incomingData) {
+        User user = new User();
+        Medicine medicine = new Medicine();
+        
+        String login,
+                token;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        
+        return medicineDao.delete(user, medicine);
+    }
     
 }

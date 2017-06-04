@@ -111,4 +111,31 @@ public class ExcerptDao {
         return Response.ok("{\"excerptId\":" + excerpt.getId() + "}").build();
     }
     
+    public Response update(User user, Excerpt excerpt)	{
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("doctor")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT updateExcerpt('" + excerpt.getRecognition()
+                    + "', '" + excerpt.getRecomendations() + "', '" + excerpt.getEpicrisis()
+                    + ")");
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+	
+        connection.closeConnection();
+        return Response.ok().build();
+     }
+    
 }

@@ -115,4 +115,26 @@ public class MedicineDao {
         return Response.ok("{\"medicineId\":" + medicine.getId() + "}").build();
     }
 
+    public Response update(User user, Medicine medicine) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT updateMedicine('" + medicine.getName()
+                    + "', '" + medicine.getActiveSubstance() + "')");
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        
+        connection.closeConnection();
+        return Response.ok().build();
+    }    
 }

@@ -24,7 +24,6 @@ public class PrescriptionService {
     public Response add(String incomingData) {
         User user = new User();
         Prescription prescription = new Prescription();
-System.err.println("tu");
         String login;
         String token;
         String dosage;
@@ -60,6 +59,75 @@ System.err.println("tu");
         prescription.setPatientId(patientId);
         
         return prescriptionDao.add(user, prescription);
+    }
+    
+    @POST
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(String incomingData) {
+        User user = new User();
+        Prescription prescription = new Prescription();
+
+        String dosage;
+        String expiryDate;
+        String medicineName;
+        int doctorId;
+        int patientId;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            dosage = json.getString("dosage");
+            expiryDate = json.getString("expiryDate");
+            medicineName = json.getString("medicineName");
+            doctorId = json.getInt("doctorId");
+            patientId = json.getInt("patientId");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        prescription.setDosage(dosage);
+        prescription.setExpiryDate(expiryDate);
+        prescription.setMedicineName(medicineName);
+        prescription.setDoctorid(doctorId);
+        prescription.setPatientId(patientId);
+        
+        return prescriptionDao.update(user, prescription);
+    }
+ 
+    @POST
+    @Path("/delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(String incomingData) {
+        User user = new User();
+        Prescription prescription = new Prescription();
+           
+        String login,
+                token;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        
+        return prescriptionDao.delete(user, prescription);
     }
     
 }

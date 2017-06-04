@@ -331,4 +331,34 @@ public class PatientService {
         return patientDao.update(user, patient);
     }
     
+    @POST
+    @Path("/delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(String incomingData) {
+        User user = new User();
+        Patient patient = new Patient();
+           
+        String login,
+                token;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        
+        return patientDao.delete(user, patient);
+    }
+    
 }
