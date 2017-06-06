@@ -138,13 +138,11 @@ public class HospitalService {
     }
 
     @POST
-    @Path("/delete")
+    @Path("/delete/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(String incomingData) {
+    public Response delete(String incomingData, @PathParam("id") int id) {
         User user = new User();
-        Hospital hospital = new Hospital();
-        
+
         String login,
                 token;
         
@@ -164,7 +162,7 @@ public class HospitalService {
         user.setLogin(login);
         user.setToken(token);
         
-        return hospitalDao.delete(user, hospital);
+        return hospitalDao.delete(user, id);
     }
     
 }
