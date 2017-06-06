@@ -2,7 +2,6 @@ package com.panaceum.dao;
 
 import com.google.gson.Gson;
 import com.panaceum.model.History;
-import com.panaceum.model.Patient;
 import com.panaceum.model.User;
 import com.panaceum.util.DatabaseConnection;
 import java.sql.ResultSet;
@@ -154,6 +153,32 @@ public class HistoryDao {
         connection.closeConnection();
 
         return Response.ok("{\"historyId\":" + history.getId() + "}").build();
+    }
+    
+    public Response delete(User user, int id) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("doctor")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            statement.executeQuery("SELECT deleteHistory(" + id + ")");
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("Zapytanie nie zwróciło żadnych wyników")) {
+                System.out.println(ex.toString());
+                connection.closeConnection();
+                return Response.serverError().build();
+            }
+        }
+
+        connection.closeConnection();
+        return Response.ok().build();
     }
     
 }

@@ -20,6 +20,7 @@ import org.codehaus.jettison.json.JSONObject;
 @Path("/history")
 public class HistoryService {
     
+    private HistoryDao historyDao = new HistoryDao();
     private TherapyPlanDao therapyPlanDao = new TherapyPlanDao();
     private ExcerptDao excerptDao = new ExcerptDao();
     
@@ -159,13 +160,11 @@ public class HistoryService {
     }
     
     @POST
-    @Path("/delete")
+    @Path("/delete/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(String incomingData) {
+    public Response delete(String incomingData, @PathParam("id") int id) {
         User user = new User();
-        Excerpt excerpt = new Excerpt();
-        
+
         String login,
                 token;
         
@@ -185,7 +184,7 @@ public class HistoryService {
         user.setLogin(login);
         user.setToken(token);
         
-        return excerptDao.delete(user, excerpt);
-    }    
+        return historyDao.delete(user, id);
+    }
     
 }
