@@ -173,13 +173,11 @@ public class DoctorService {
     }
     
     @POST
-    @Path("/delete")
+    @Path("/delete/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(String incomingData) {
+    public Response delete(String incomingData, @PathParam("id") int id) {
         User user = new User();
-        Doctor doctor = new Doctor();
-        
+
         String login,
                 token;
         
@@ -199,7 +197,7 @@ public class DoctorService {
         user.setLogin(login);
         user.setToken(token);
         
-        return doctorDao.delete(user, doctor);
+        return doctorDao.delete(user, id);
     }
 
 }

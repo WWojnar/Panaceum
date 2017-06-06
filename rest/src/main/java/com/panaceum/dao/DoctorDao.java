@@ -218,7 +218,7 @@ public class DoctorDao {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
         }
-        if (!userDao.checkPrivileges(user.getLogin()).equals("doctor")) {
+        if (!userDao.checkPrivileges(user.getLogin()).equals("admin")) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
         }
 
@@ -277,6 +277,32 @@ public class DoctorDao {
             return Response.serverError().build();
         }
         
+        connection.closeConnection();
+        return Response.ok().build();
+    }
+    
+    public Response delete(User user, int id) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("admin")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            statement.executeQuery("SELECT deleteDoctor(" + id + ")");
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("Zapytanie nie zwróciło żadnych wyników")) {
+                System.out.println(ex.toString());
+                connection.closeConnection();
+                return Response.serverError().build();
+            }
+        }
+
         connection.closeConnection();
         return Response.ok().build();
     }
