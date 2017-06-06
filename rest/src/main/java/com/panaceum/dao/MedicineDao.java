@@ -12,7 +12,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 public class MedicineDao {
-    
+
     private static DatabaseConnection connection = new DatabaseConnection();
     private UserDao userDao = new UserDao();
 
@@ -48,7 +48,7 @@ public class MedicineDao {
         Gson gson = new Gson();
         return Response.ok(gson.toJson(medicines)).build();
     }
-    
+
     public Response getById(User user, int id) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
@@ -74,7 +74,7 @@ public class MedicineDao {
             return Response.serverError().build();
         }
         connection.closeConnection();
-        
+
         if (medicine.getId() == 0) {
             return Response.status(404).entity("No such medicine found").build();
         }
@@ -82,7 +82,7 @@ public class MedicineDao {
         Gson gson = new Gson();
         return Response.ok(gson.toJson(medicine)).build();
     }
-    
+
     public Response add(User user, Medicine medicine) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
@@ -105,9 +105,9 @@ public class MedicineDao {
             connection.closeConnection();
             return Response.serverError().build();
         }
-        
+
         connection.closeConnection();
-        
+
         if (medicine.getId() == 0) {
             return Response.status(406).entity("Medicine already exist in DB").build();
         }
@@ -133,8 +133,32 @@ public class MedicineDao {
             connection.closeConnection();
             return Response.serverError().build();
         }
-        
+
         connection.closeConnection();
         return Response.ok().build();
-    }    
+    }
+
+    public Response delete(User user, int id) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            statement.executeQuery("DELETE FROM medicine WHERE id = " + id);
+        } catch (SQLException ex) {
+            if (!ex.toString().contains("Zapytanie nie zwróciło żadnych wyników")) {
+                System.out.println(ex.toString());
+                connection.closeConnection();
+                return Response.serverError().build();
+            }
+        }
+
+        connection.closeConnection();
+        return Response.ok().build();
+    }
+
 }

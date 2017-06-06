@@ -4,6 +4,7 @@ import com.panaceum.dao.MedicineDao;
 import com.panaceum.model.Medicine;
 import com.panaceum.model.User;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -108,13 +109,12 @@ public class MedicineService {
     }
     
     @POST
-    @Path("/delete")
+    @Path("/delete/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(String incomingData) {
+    public Response delete(String incomingData, @PathParam("id") int id) {
         User user = new User();
-        Medicine medicine = new Medicine();
-        
+
         String login,
                 token;
         
@@ -134,7 +134,7 @@ public class MedicineService {
         user.setLogin(login);
         user.setToken(token);
         
-        return medicineDao.delete(user, medicine);
+        return medicineDao.delete(user, id);
     }
     
 }
