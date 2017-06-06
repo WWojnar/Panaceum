@@ -194,6 +194,9 @@ public class UserDao {
         if (!this.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
         }
+        if (!this.checkPrivileges(user.getLogin()).equals("admin")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
 
         Statement statement;
 
