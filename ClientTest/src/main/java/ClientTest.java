@@ -402,6 +402,73 @@ public class ClientTest {
         return dataTransfer(json, url);
     }
     
+    private String updateHistory(String login, String token, int historyId,
+            String nurseCard, String finalCard, String pressure, String pulse, float temperature, float mass,
+            float height, String content, String idc10, boolean firstIllnes, String symptoms, String recognition,
+            String treatment, boolean[] factor, String factor5Note, String factor6Note, String factor7Note, String notepad) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("historyId", historyId)
+                    .put("nurseCard", nurseCard)
+                    .put("finalCard", finalCard)
+                    .put("pressure", pressure)
+                    .put("pulse", pulse)
+                    .put("temperature", temperature)
+                    .put("mass", mass)
+                    .put("height", height)
+                    .put("content", content)
+                    .put("idc10", idc10)
+                    .put("firstIllnes", firstIllnes)
+                    .put("symptoms", symptoms)
+                    .put("interviewRecognition", recognition)
+                    .put("treatment", treatment)
+                    .put("factor1", factor[0])
+                    .put("factor2", factor[1])
+                    .put("factor3", factor[2])
+                    .put("factor4", factor[3])
+                    .put("factor5", factor[4])
+                    .put("factor5Note", factor5Note)
+                    .put("factor6", factor[5])
+                    .put("factor6Note", factor6Note)
+                    .put("factor7", factor[6])
+                    .put("factor7Note", factor7Note)
+                    .put("factor8", factor[7])
+                    .put("factor9", factor[8])
+                    .put("factor10", factor[9])
+                    .put("factor11", factor[10])
+                    .put("factor12", factor[11])
+                    .put("factor13", factor[12])
+                    .put("factor14", factor[13])
+                    .put("factor15", factor[14])
+                    .put("factor16", factor[15])
+                    .put("factor17", factor[16])
+                    .put("factor18", factor[17])
+                    .put("factor19", factor[18])
+                    .put("factor20", factor[19])
+                    .put("factor21", factor[20])
+                    .put("factor22", factor[21])
+                    .put("factor23", factor[22])
+                    .put("factor24", factor[23])
+                    .put("factor25", factor[24])
+                    .put("factor26", factor[25])
+                    .put("factor27", factor[26])
+                    .put("factor28", factor[27])
+                    .put("factor29", factor[28])
+                    .put("factor30", factor[29])
+                    .put("notepad", notepad);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/history/update";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/update";
+
+        return dataTransfer(json, url);
+    }
+    
     private String deleteMedicine(String login, String token, int id) {
         JSONObject json = null;
         
@@ -574,10 +641,12 @@ public class ClientTest {
         //help = test.updatePatient("kluski", "1", 12, "male", 18, "A+", "Bob", "Bobo", "123456789", "email@email", "city", "street", "1", "1", "11-111");
         //help = test.updateDoctor("kluski", "1", "123456789", "email@email", "city", "street", "1", "1", "11-111");
         //help = test.updateHospital("testo", "1", 3, "name", "123456789", "123456789", "city", "street", "1", "1", "11-111");
+        help = test.updateHistory("kluski", "1", 31, "updateNurseCard", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
+        
         //help = test.deleteMedicine("kluski", "1", 6);
         //help = test.deleteAdmin("kluski2", "0510da914e99937301749e36c38de6b6");
         //help = test.deletePatient("kluski", "1", 18);
-        help = test.deleteDoctor("testo", "1", 21);
+        //help = test.deleteDoctor("testo", "1", 21);
         //help = test.deleteHospital("testo", "1", 6);
         //help = test.deleteHistory("kluski", "1", 30);
         //help = test.deleteTherapyPlan("kluski", "1", 11);
