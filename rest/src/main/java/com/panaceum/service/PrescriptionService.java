@@ -6,6 +6,7 @@ import com.panaceum.model.User;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -101,13 +102,11 @@ public class PrescriptionService {
     }
  
     @POST
-    @Path("/delete")
+    @Path("/delete/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(String incomingData) {
+    public Response delete(String incomingData, @PathParam("id") int id) {
         User user = new User();
-        Prescription prescription = new Prescription();
-           
+
         String login,
                 token;
         
@@ -127,7 +126,7 @@ public class PrescriptionService {
         user.setLogin(login);
         user.setToken(token);
         
-        return prescriptionDao.delete(user, prescription);
+        return prescriptionDao.delete(user, id);
     }
     
 }

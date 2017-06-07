@@ -215,4 +215,32 @@ public class HistoryService {
         return therapyPlanDao.delete(user, id);
     }
     
+    @POST
+    @Path("/deleteExcerpt/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deleteExcerpt(String incomingData, @PathParam("id") int id) {
+        User user = new User();
+
+        String login,
+                token;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        
+        return excerptDao.delete(user, id);
+    }
+    
 }

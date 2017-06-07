@@ -59,7 +59,7 @@ public class DoctorService {
     public Response add(String incomingData) {
         User user = new User();
         Doctor doctor = new Doctor();
-        
+
         String login,
                 token,
                 speciality,

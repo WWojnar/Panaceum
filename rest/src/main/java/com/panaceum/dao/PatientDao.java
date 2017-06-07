@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 
 import com.panaceum.model.User;
 import com.panaceum.util.DatabaseConnection;
+import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class PatientDao {
     private static DatabaseConnection connection = new DatabaseConnection();
 
     private static UserDao userDao = new UserDao();
+    private static HistoryDao historyDao = new HistoryDao();
 
     public Response getById(User user, int id) {
         if (!userDao.validate(user)) {
@@ -185,7 +187,7 @@ public class PatientDao {
 
         return Response.ok("{\"patientId\":" + patient.getId() + "}").build();
     }
-    
+
     public Response update(User user, Patient patient) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
@@ -206,7 +208,7 @@ public class PatientDao {
                     + "', '" + patient.getLastName() + "', '" + patient.getPhone() + "', '" + patient.getEmail()
                     + "', '" + patient.getCity() + "', '" + patient.getStreet() + "', '" + patient.getBuildingNumber()
                     + "', '" + patient.getFlatNumber() + "', '" + patient.getZipCode() + "')");
-            
+
             while (resultSet.next()) {
                 result = resultSet.getInt(1);
             }
@@ -224,7 +226,7 @@ public class PatientDao {
 
         return Response.ok().build();
     }
-    
+
     public Response delete(User user, int id) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
@@ -239,7 +241,7 @@ public class PatientDao {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
             statement.executeQuery("DELETE FROM patient WHERE id = " + id);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             if (!ex.toString().contains("Zapytanie nie zwróciło żadnych wyników")) {
                 System.out.println(ex.toString());
                 connection.closeConnection();

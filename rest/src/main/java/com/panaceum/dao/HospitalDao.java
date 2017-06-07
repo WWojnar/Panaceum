@@ -82,7 +82,7 @@ public class HospitalDao {
         if (hospital.getId() == 0) {
             return Response.status(406).entity("Hospital already exist in DB").build();
         }
-
+System.err.println("to");
         return Response.ok("{\"hospitalId\":" + hospital.getId() + "}").build();
     }
     
