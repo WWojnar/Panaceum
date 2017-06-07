@@ -4,6 +4,7 @@ import com.panaceum.dao.ExcerptDao;
 import com.panaceum.dao.HistoryDao;
 import com.panaceum.dao.TherapyPlanDao;
 import com.panaceum.model.Excerpt;
+import com.panaceum.model.History;
 import com.panaceum.model.TherapyPlan;
 import com.panaceum.model.User;
 import javax.ws.rs.Consumes;
@@ -130,20 +131,59 @@ public class HistoryService {
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(String incomingData) {
+    public Response addHistory(String incomingData) {
         User user = new User();
-        Excerpt excerpt = new Excerpt();
+        History history = new History();
         
-        String  recognition,
-                recomendations,
-                epicrisis;
+        String login,
+                token;
+        int historyId;
+        String nurseCard,
+                finalCard,
+                pressure,
+                pulse;
+        float temperature,
+                mass,
+                height;
+        String content,
+                idc10;
+        boolean firstIllnes;
+        String symptoms,
+                interviewRecognition,
+                treatment;
+        boolean[] factor = new boolean[30];
+        String factor5Note,
+                factor6Note,
+                factor7Note,
+                notepad;
         
         try {
             JSONObject json = new JSONObject(incomingData);
             
-            recognition = json.getString("recognition");
-            recomendations = json.getString("recomendations");
-            epicrisis = json.getString("epicrisis");
+            login = json.getString("login");
+            token = json.getString("token");
+            historyId = json.getInt("historyId");
+            nurseCard = json.getString("nurseCard");
+            finalCard = json.getString("finalCard");
+            pressure = json.getString("pressure");
+            pulse = json.getString("pulse");
+            temperature = (float)json.getDouble("temperature");
+            mass = (float)json.getDouble("mass");
+            height = (float)json.getDouble("height");
+            content = json.getString("content");
+            idc10 = json.getString("idc10");
+            firstIllnes = json.getBoolean("firstIllnes");
+            symptoms = json.getString("symptoms");
+            interviewRecognition = json.getString("interviewRecognition");
+            treatment = json.getString("treatment");
+            for (int i = 1; i < 6; i++) factor[i - 1] = json.getBoolean("factor" + i);
+            factor5Note = json.getString("factor5Note");
+            factor[5] = json.getBoolean("factor6");
+            factor6Note = json.getString("factor6Note");
+            factor[6] = json.getBoolean("factor7");
+            factor7Note = json.getString("factor7Note");
+            for (int i = 8; i < 31; i++) factor[i - 1] = json.getBoolean("factor" + i);
+            notepad = json.getString("notepad");
         } catch (JSONException e) {
             System.err.println(e.toString());
             return Response.status(415).entity("Invalid JSON format").build();
@@ -152,11 +192,58 @@ public class HistoryService {
             return Response.serverError().entity("Unkown error").build();
         }
         
-        excerpt.setRecognition(recognition);
-        excerpt.setRecomendations(recomendations);
-        excerpt.setEpicrisis(epicrisis);
+        user.setLogin(login);
+        user.setToken(token);
+        history.setId(historyId);
+        history.setNurseCard(nurseCard);
+        history.setFinalCard(finalCard);
+        history.setPressure(pressure);
+        history.setPulse(pulse);
+        history.setTemperature(temperature);
+        history.setMass(mass);
+        history.setHeight(height);
+        history.setContent(content);
+        history.setIdc10(idc10);
+        history.setFirstIllnes(firstIllnes);
+        history.setSymptoms(symptoms);
+        history.setInterviewRecognition(interviewRecognition);
+        history.setTreatment(treatment);System.err.println(history.getTreatment());
+        history.setFactor1(factor[0]);
+        history.setFactor2(factor[1]);
+        history.setFactor3(factor[2]);
+        history.setFactor4(factor[3]);
+        history.setFactor5(factor[4]);
+        history.setFactor5Note(factor5Note);
+        history.setFactor6(factor[5]);
+        history.setFactor6Note(factor6Note);
+        history.setFactor7(factor[6]);
+        history.setFactor7Note(factor7Note);
+        history.setFactor8(factor[7]);
+        history.setFactor9(factor[8]);
+        history.setFactor10(factor[9]);
+        history.setFactor11(factor[10]);
+        history.setFactor12(factor[11]);
+        history.setFactor13(factor[12]);
+        history.setFactor14(factor[13]);
+        history.setFactor15(factor[14]);
+        history.setFactor16(factor[15]);
+        history.setFactor17(factor[16]);
+        history.setFactor18(factor[17]);
+        history.setFactor19(factor[18]);
+        history.setFactor20(factor[19]);
+        history.setFactor21(factor[20]);
+        history.setFactor22(factor[21]);
+        history.setFactor23(factor[22]);
+        history.setFactor24(factor[23]);
+        history.setFactor25(factor[24]);
+        history.setFactor26(factor[25]);
+        history.setFactor27(factor[26]);
+        history.setFactor28(factor[27]);
+        history.setFactor29(factor[28]);
+        history.setFactor30(factor[29]);
+        history.setNotepad(notepad);
         
-        return excerptDao.update(user, excerpt);
+        return historyDao.update(user, history);
     }
     
     @POST

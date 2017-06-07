@@ -451,6 +451,49 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION updateHistory(_historyId integer, _nurseCard text, _finalCard text, _pressure character varying, _pulse character varying, _temperature float, _mass float, _height float, _content text, _idc10 character, _firstIllnes boolean, _symptoms text, _interviewRecognition text, _treatment text, _factor1 boolean, _factor2 boolean, _factor3 boolean, _factor4 boolean, _factor5 boolean, _factor5Note character varying, _factor6 boolean, _factor6Note character varying, _factor7 boolean, _factor7Note character varying, _factor8 boolean, _factor9 boolean, _factor10 boolean, _factor11 boolean, _factor12 boolean, _factor13 boolean, _factor14 boolean, _factor15 boolean, _factor16 boolean, _factor17 boolean, _factor18 boolean, _factor19 boolean, _factor20 boolean, _factor21 boolean, _factor22 boolean, _factor23 boolean, _factor24 boolean, _factor25 boolean, _factor26 boolean, _factor27 boolean, _factor28 boolean, _factor29 boolean, _factor30 boolean, _notepad text) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF 0 != (SELECT COUNT(*) FROM history WHERE id = _historyId) THEN
+		UPDATE firstExamination
+		SET pressure = _pressure,
+			pulse = _pulse,
+			temperature = _temperature,
+			mass = _mass,
+			height = _height,
+			content = _content
+		WHERE id = (SELECT firstExaminationId FROM history WHERE id = _historyId);
+			
+		UPDATE interview
+		SET idc10 = _idc10,
+			firstIllnes = _firstIllnes,
+			symptoms = _symptoms,
+			recognition = _interviewRecognition,
+			treatment = _treatment
+		WHERE id = (SELECT interviewId FROM history WHERE id = _historyId);
+		
+		UPDATE infectionCard
+		SET factor1 = _factor1, factor2 = _factor2, factor3 = _factor3, factor4 = _factor4, factor5 = _factor5,
+			factor6 = _factor6, factor7 = _factor7, factor8 = _factor8, factor9 = _factor9, factor10 = _factor10,
+			factor11 = _factor11, factor12 = _factor12, factor13 = _factor13, factor14 = _factor14, factor15 = _factor15,
+			factor16 = _factor16, factor17 = _factor17, factor18 = _factor18, factor19 = _factor19, factor20 = _factor20,
+			factor21 = _factor21, factor22 = _factor22, factor23 = _factor23, factor24 = _factor24, factor25 = _factor25,
+			factor26 = _factor26, factor27 = _factor27, factor28 = _factor28, factor29 = _factor29, factor30 = _factor30,
+			factor5Note = _factor5Note, factor6Note = _factor6Note, factor7Note = _factor7Note, notepad = _notepad
+		WHERE id = (SELECT infectionCardId FROM history WHERE id = _historyId);
+		
+		UPDATE history
+		SET nurseCard = _nurseCard,
+			finalCard = _finalCard
+		WHERE id = _historyId;
+			
+		RETURN 1;
+	ELSE RETURN 0;
+	END IF;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION updateHospital(_hospitalId integer, _name character varying, _regon character, _phone character varying, _city character varying, _street character varying, _buildingNumber character varying, _flatNumber character varying, _zipCode character) RETURNS integer
 	LANGUAGE plpgsql
     AS $$
