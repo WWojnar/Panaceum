@@ -112,6 +112,41 @@ public class TherapyPlanDao {
         return Response.ok("{\"therapyPlanId\":" + therapyPlan.getId() + "}").build();
     }
     
+    public Response update(User user, TherapyPlan therapyPlan) {
+        if (!userDao.validate(user)) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+        if (!userDao.checkPrivileges(user.getLogin()).equals("doctor")) {
+            return Response.status(403).entity("User doesn't have necessary permissions").build();
+        }
+
+        Statement statement;
+        ResultSet resultSet;
+
+        try {
+            connection.establishConnection();
+            statement = connection.getConnection().createStatement();
+            resultSet = statement.executeQuery("SELECT updateTherapyPlan(" + therapyPlan.getId() + ", '" + therapyPlan.getExaminations()
+                    + "', '" + therapyPlan.getOrders() + "')");
+
+            while (resultSet.next()) {
+                therapyPlan.setId(resultSet.getInt(1));
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+            connection.closeConnection();
+            return Response.serverError().build();
+        }
+        
+        connection.closeConnection();
+        
+        if (therapyPlan.getId() == 0) {
+            return Response.status(404).entity("No such therapyPlan").build();
+        }
+
+        return Response.ok().build();
+    }
+    
     public Response delete(User user, int id) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();

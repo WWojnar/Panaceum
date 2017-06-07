@@ -131,7 +131,7 @@ public class HistoryService {
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addHistory(String incomingData) {
+    public Response update(String incomingData) {
         User user = new User();
         History history = new History();
         
@@ -244,6 +244,87 @@ public class HistoryService {
         history.setNotepad(notepad);
         
         return historyDao.update(user, history);
+    }
+    
+    @POST
+    @Path("/updateTherapyPlan")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateTherapyPlan(String incomingData) {
+        User user = new User();
+        TherapyPlan therapyPlan = new TherapyPlan();
+        
+        String login,
+                token;
+        int therapyPlanId;
+        String examinations,
+                orders;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+            therapyPlanId = json.getInt("therapyPlanId");
+            examinations = json.getString("examination");
+            orders = json.getString("orders");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        therapyPlan.setId(therapyPlanId);
+        therapyPlan.setExaminations(examinations);
+        therapyPlan.setOrders(orders);
+        
+        return therapyPlanDao.update(user, therapyPlan);
+    }
+    
+    @POST
+    @Path("/updateExcerpt")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateExcerpt(String incomingData) {
+        User user = new User();
+        Excerpt excerpt = new Excerpt();
+        
+        String login,
+                token;
+        int excerptId;
+        String recognition,
+                recomendations,
+                epicrisis;
+        
+        try {
+            JSONObject json = new JSONObject(incomingData);
+            
+            login = json.getString("login");
+            token = json.getString("token");
+            excerptId = json.getInt("excerptId");
+            recognition = json.getString("recognition");
+            recomendations = json.getString("recomendations");
+            epicrisis = json.getString("epicrisis");
+        } catch (JSONException e) {
+            System.err.println(e.toString());
+            return Response.status(415).entity("Invalid JSON format").build();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return Response.serverError().entity("Unkown error").build();
+        }
+        
+        user.setLogin(login);
+        user.setToken(token);
+        excerpt.setId(excerptId);
+        excerpt.setRecognition(recognition);
+        excerpt.setRecomendations(recomendations);
+        excerpt.setEpicrisis(epicrisis);
+        
+        return excerptDao.update(user, excerpt);
     }
     
     @POST

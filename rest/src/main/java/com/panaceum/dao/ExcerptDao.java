@@ -111,7 +111,7 @@ public class ExcerptDao {
         return Response.ok("{\"excerptId\":" + excerpt.getId() + "}").build();
     }
     
-    public Response update(User user, Excerpt excerpt)	{
+    public Response update(User user, Excerpt excerpt) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
         }
@@ -125,18 +125,26 @@ public class ExcerptDao {
         try {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT updateExcerpt('" + excerpt.getRecognition()
-                    + "', '" + excerpt.getRecomendations() + "', '" + excerpt.getEpicrisis()
-                    + ")");
+            resultSet = statement.executeQuery("SELECT updateExcerpt(" + excerpt.getId() + ", '" + excerpt.getRecognition()
+                    + "', '" + excerpt.getRecomendations() + "', '" + excerpt.getEpicrisis() + "')");
+
+            while (resultSet.next()) {
+                excerpt.setId(resultSet.getInt(1));
+            }
         } catch (SQLException ex) {
             System.out.println(ex.toString());
             connection.closeConnection();
             return Response.serverError().build();
         }
-	
+        
         connection.closeConnection();
+        
+        if (excerpt.getId() == 0) {
+            return Response.status(404).entity("No such excerpt").build();
+        }
+
         return Response.ok().build();
-     }
+    }
     
     public Response delete(User user, int id) {
         if (!userDao.validate(user)) {

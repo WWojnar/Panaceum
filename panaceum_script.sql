@@ -451,6 +451,23 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION updateExcerpt(_excerptId integer, _recognition text, _recomendations text, _epicrisis text) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+BEGIN
+	IF 0 != (SELECT COUNT(*) FROM excerpt WHERE id = _excerptId) THEN
+		UPDATE excerpt
+		SET recognition = _recognition,
+			recomendations = _recomendations,
+			epicrisis = _epicrisis
+		WHERE id = _excerptId;
+		RETURN 1;
+	ELSE RETURN 0;
+	END IF;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION updateHistory(_historyId integer, _nurseCard text, _finalCard text, _pressure character varying, _pulse character varying, _temperature float, _mass float, _height float, _content text, _idc10 character, _firstIllnes boolean, _symptoms text, _interviewRecognition text, _treatment text, _factor1 boolean, _factor2 boolean, _factor3 boolean, _factor4 boolean, _factor5 boolean, _factor5Note character varying, _factor6 boolean, _factor6Note character varying, _factor7 boolean, _factor7Note character varying, _factor8 boolean, _factor9 boolean, _factor10 boolean, _factor11 boolean, _factor12 boolean, _factor13 boolean, _factor14 boolean, _factor15 boolean, _factor16 boolean, _factor17 boolean, _factor18 boolean, _factor19 boolean, _factor20 boolean, _factor21 boolean, _factor22 boolean, _factor23 boolean, _factor24 boolean, _factor25 boolean, _factor26 boolean, _factor27 boolean, _factor28 boolean, _factor29 boolean, _factor30 boolean, _notepad text) RETURNS integer
 	LANGUAGE plpgsql
     AS $$
@@ -555,6 +572,22 @@ BEGIN
 	WHERE pesel = _pesel;
 	_addressId := (SELECT addressId FROM person WHERE pesel = _pesel);
 	PERFORM updateAddress(_addressId , _city, _street, _buildingNumber, _flatNumber, _zipCode);
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION updateTherapyPlan(_therapyPlanId integer, _examination text, _orders text) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+	DECLARE ret integer;
+BEGIN
+	IF 0 != (SELECT COUNT(*) FROM therapyPlan WHERE id = _therapyPlanId) THEN
+		UPDATE therapyPlan
+		SET examination = _examination,
+			orders = _orders
+		WHERE id = _therapyPlanId;
+		RETURN 1;
+	ELSE RETURN 0;
+	END IF;
 END;
 $$;
 
