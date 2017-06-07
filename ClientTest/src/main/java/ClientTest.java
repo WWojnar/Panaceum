@@ -469,6 +469,45 @@ public class ClientTest {
         return dataTransfer(json, url);
     }
     
+    private String updateTherapyPlan(String login, String token, int therapyPlanId, String examination, String orders) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("therapyPlanId", therapyPlanId)
+                    .put("examination", examination)
+                    .put("orders", orders);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/history/updateTherapyPlan";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/updateTherapyPlan";
+
+        return dataTransfer(json, url);
+    }
+    
+    private String updateExcerpt(String login, String token, int excerptId, String recognition, String recomendations, String epicrisis) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("excerptId", excerptId)
+                    .put("recognition", recognition)
+                    .put("recomendations", recomendations)
+                    .put("epicrisis", epicrisis);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/history/updateExcerpt";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/updateExcerpt";
+
+        return dataTransfer(json, url);
+    }
+    
     private String deleteMedicine(String login, String token, int id) {
         JSONObject json = null;
         
@@ -641,7 +680,9 @@ public class ClientTest {
         //help = test.updatePatient("kluski", "1", 12, "male", 18, "A+", "Bob", "Bobo", "123456789", "email@email", "city", "street", "1", "1", "11-111");
         //help = test.updateDoctor("kluski", "1", "123456789", "email@email", "city", "street", "1", "1", "11-111");
         //help = test.updateHospital("testo", "1", 3, "name", "123456789", "123456789", "city", "street", "1", "1", "11-111");
-        help = test.updateHistory("kluski", "1", 31, "updateNurseCard", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
+        //help = test.updateHistory("kluski", "1", 31, "updateNurseCard", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
+        //help = test.updateTherapyPlan("kluski", "1", 13, "updated examination", "updated orders");
+        help = test.updateExcerpt("kluski", "1", 12, "updated recognition", "recomendations", "updated epicrisis");
         
         //help = test.deleteMedicine("kluski", "1", 6);
         //help = test.deleteAdmin("kluski2", "0510da914e99937301749e36c38de6b6");
