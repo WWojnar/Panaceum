@@ -126,8 +126,12 @@ public class MedicineDao {
         try {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT updateMedicine('" + medicine.getName()
+            resultSet = statement.executeQuery("SELECT updateMedicine(" + medicine.getId() + ", '" + medicine.getName()
                     + "', '" + medicine.getActiveSubstance() + "')");
+
+            while (resultSet.next()) {
+                medicine.setId(resultSet.getInt(1));
+            }
         } catch (SQLException ex) {
             System.out.println(ex.toString());
             connection.closeConnection();
@@ -135,6 +139,11 @@ public class MedicineDao {
         }
 
         connection.closeConnection();
+
+        if (medicine.getId() == 0) {
+            return Response.status(404).entity("No such medicine").build();
+        }
+
         return Response.ok().build();
     }
 

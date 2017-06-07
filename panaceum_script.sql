@@ -530,6 +530,21 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION updateMedicine(_medicineId integer, _name character varying, _activeSubstance text) RETURNS integer
+	LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF 0 != (SELECT COUNT(*) FROM medicine WHERE id = _medicineId) THEN
+		UPDATE medicine
+		SET name = _name,
+			activeSubstance = _activeSubstance
+		WHERE id = _medicineId;
+		RETURN 1;
+	ELSE RETURN 0;
+	END IF;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION updatePassword(_login character varying, _passwd character varying) RETURNS void
 	LANGUAGE plpgsql
 	AS $$

@@ -85,13 +85,19 @@ public class MedicineService {
     public Response update(String incomingData) {
         User user = new User();
         Medicine medicine = new Medicine();
-             
-        String	name,
+        
+        String login,
+                token;
+        int medicineId;
+        String name,
                 activeSubstance;
         
         try {
             JSONObject json = new JSONObject(incomingData);
             
+            login = json.getString("login");
+            token = json.getString("token");
+            medicineId = json.getInt("medicineId");
             name = json.getString("name");
             activeSubstance = json.getString("activeSubstance");
         } catch (JSONException e) {
@@ -102,6 +108,9 @@ public class MedicineService {
             return Response.serverError().entity("Unkown error").build();
         }
         
+        user.setLogin(login);
+        user.setToken(token);
+        medicine.setId(medicineId);
         medicine.setName(name);
         medicine.setActiveSubstance(activeSubstance);
         
