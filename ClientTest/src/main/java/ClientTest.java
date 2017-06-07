@@ -55,8 +55,8 @@ public class ClientTest {
             return "Klient: Blad przy tworzeniu JSONa";
         }
 
-        //String url = "http://localhost:8084/Panaceum/user/register";
-        String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/user/register";
+        String url = "http://localhost:8084/Panaceum/user/register";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/user/register";
 
         return dataTransfer(json, url);
     }
@@ -71,8 +71,8 @@ public class ClientTest {
             return "Klient: Blad przy tworzeniu JSONa";
         }
 
-        //String url = "http://localhost:8084/Panaceum/user/login";
-        String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/user/login";
+        String url = "http://localhost:8084/Panaceum/user/login";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/user/login";
 
         return dataTransfer(json, url);
     }
@@ -93,8 +93,8 @@ public class ClientTest {
             return "Klient: Blad przy tworzeniu JSONa";
         }
 
-        //String url = "http://localhost:8084/Panaceum/prescription/add";
-        String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/prescription/add";
+        String url = "http://localhost:8084/Panaceum/prescription/add";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/prescription/add";
 
         return dataTransfer(json, url);
     }
@@ -401,25 +401,188 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String deleteMedicine(String login, String token, int id) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/medicine/delete/" + id;
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/medicine/delete/" + id;
+
+        return dataTransfer(json, url);
+    }
+    
+    private String deleteAdmin(String login, String token) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/user/deleteAdmin/";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/user/deleteAdmin/";
+
+        return dataTransfer(json, url);
+    }
+    
+    private String deletePatient(String login, String token, int id) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/patient/delete/" + id;
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/patient/delete/" + id;
+
+        return dataTransfer(json, url);
+    }
+    
+    private String deleteDoctor(String login, String token, int id) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/doctor/delete/" + id;
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/doctor/delete/" + id;
+
+        return dataTransfer(json, url);
+    }
+    
+    private String deleteHospital(String login, String token, int id) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/hospital/delete/" + id;
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/hospital/delete/" + id;
+
+        return dataTransfer(json, url);
+    }
+    
+    private String deleteHistory(String login, String token, int id) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/history/delete/" + id;
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/delete/" + id;
+
+        return dataTransfer(json, url);
+    }
+    
+    private String deleteTherapyPlan(String login, String token, int id) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/history/deleteTherapyPlan/" + id;
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/deleteTherapyPlan/" + id;
+
+        return dataTransfer(json, url);
+    }
+    
+    private String deleteExcerpt(String login, String token, int id) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/history/deleteExcerpt/" + id;
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/history/deleteExcerpt/" + id;
+
+        return dataTransfer(json, url);
+    }
+    
+    private String deletePrescription(String login, String token, int id) {
+        JSONObject json = null;
+        
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/prescription/delete/" + id;
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/prescription/delete/" + id;
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
         String help = "";
 
-        //help = test.register("kluski", "1234");
-        //help = test.login("kluski", "1234");
+        //help = test.register("kluski2", "1234");
+        //help = test.login("kluski2", "1234");
         //help = test.addPrescription("kluski", "45263ae3d04964189f2477ebabcdb283", "wcinaj pan", "2017-08-15", "Medicine1", 1, 1);
-        //help = test.addDoctor("kluski", "1", "spe", "1234567898", "12345678913", "opo", "asd", "65", "em", "ci", "st", "bu", "fl", "11-111", "sexDoctor");
-        //help = test.addMedicine("kluski", "1", "testomed", "dużo");
+        //help = test.addDoctor("testo", "1", "spe", "1234567898", "12345678913", "opo", "asd", "65", "em", "ci", "st", "bu", "fl", "11-111", "sexDoctor");
+        //help = test.addPatient("kluski", "1", "male", 18, "A+", "98765432198", "fi", "la", "ph", "em", "ci", "st", "bu", "fl", "11-111");
+        //help = test.addMedicine("kluski", "1", "med1", "dużo");
         //help = test.addHospital("testo", "1", "na", "123456789", "ph", "ci", "st", "bu", "fl", "11-111");
         boolean[] factors = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
         //help = test.addHistory("kluski", "1", 1, 1, 1, "", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
-        //help = test.addTherapyPlan("kluski", "1", "examination", "orders", 2);
-        //help = test.addExcerpt("kluski", "1", "recognition", "recomendations", "epicrisis", 2);
+        //help = test.addTherapyPlan("kluski", "1", "examination", "orders", 31);
+        //help = test.addExcerpt("kluski", "1", "recognition", "recomendations", "epicrisis", 31);
         //help = test.updatePassword("kluski", "1", "1234");
         //help = test.updatePatient("kluski", "1", 12, "male", 18, "A+", "Bob", "Bobo", "123456789", "email@email", "city", "street", "1", "1", "11-111");
         //help = test.updateDoctor("kluski", "1", "123456789", "email@email", "city", "street", "1", "1", "11-111");
-        help = test.updateHospital("testo", "1", 3, "name", "123456789", "123456789", "city", "street", "1", "1", "11-111");
+        //help = test.updateHospital("testo", "1", 3, "name", "123456789", "123456789", "city", "street", "1", "1", "11-111");
+        //help = test.deleteMedicine("kluski", "1", 6);
+        //help = test.deleteAdmin("kluski2", "0510da914e99937301749e36c38de6b6");
+        //help = test.deletePatient("kluski", "1", 18);
+        help = test.deleteDoctor("testo", "1", 21);
+        //help = test.deleteHospital("testo", "1", 6);
+        //help = test.deleteHistory("kluski", "1", 30);
+        //help = test.deleteTherapyPlan("kluski", "1", 11);
+        //help = test.deleteExcerpt("kluski", "1", 10);
+        //help = test.deletePrescription("kluski", "1", 2);
         
         System.out.println(help);
     }
