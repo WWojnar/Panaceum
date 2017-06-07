@@ -660,6 +660,25 @@ public class ClientTest {
 
         return dataTransfer(json, url);
     }
+    
+    private String updateMedicine(String login, String token, int medicineId, String name, String activeSubstance) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject()
+                    .put("login", login)
+                    .put("token", token)
+                    .put("medicineId", medicineId)
+                    .put("name", name)
+                    .put("activeSubstance", activeSubstance);
+        } catch (JSONException e) {
+            return "Klient: Blad przy tworzeniu JSONa";
+        }
+
+        String url = "http://localhost:8084/Panaceum/medicine/update";
+        //String url = "http://panaceum.iiar.pwr.edu.pl:8080/Panaceum/medicine/update";
+
+        return dataTransfer(json, url);
+    }
 
     public static void main(String[] args) {
         ClientTest test = new ClientTest();
@@ -670,7 +689,7 @@ public class ClientTest {
         //help = test.addPrescription("kluski", "45263ae3d04964189f2477ebabcdb283", "wcinaj pan", "2017-08-15", "Medicine1", 1, 1);
         //help = test.addDoctor("testo", "1", "spe", "1234567898", "12345678913", "opo", "asd", "65", "em", "ci", "st", "bu", "fl", "11-111", "sexDoctor");
         //help = test.addPatient("kluski", "1", "male", 18, "A+", "98765432198", "fi", "la", "ph", "em", "ci", "st", "bu", "fl", "11-111");
-        //help = test.addMedicine("kluski", "1", "med1", "dużo");
+        //help = test.addMedicine("kluski", "1", "med2", "dużo");
         //help = test.addHospital("testo", "1", "na", "123456789", "ph", "ci", "st", "bu", "fl", "11-111");
         boolean[] factors = {true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true};
         //help = test.addHistory("kluski", "1", 1, 1, 1, "", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
@@ -682,8 +701,8 @@ public class ClientTest {
         //help = test.updateHospital("testo", "1", 3, "name", "123456789", "123456789", "city", "street", "1", "1", "11-111");
         //help = test.updateHistory("kluski", "1", 31, "updateNurseCard", "", "", "", 0, 0, 0, "", "abc", true, "", "", "", factors, "", "", "", "");
         //help = test.updateTherapyPlan("kluski", "1", 13, "updated examination", "updated orders");
-        help = test.updateExcerpt("kluski", "1", 12, "updated recognition", "recomendations", "updated epicrisis");
-        
+        //help = test.updateExcerpt("kluski", "1", 12, "updated recognition", "recomendations", "updated epicrisis");
+        help = test.updateMedicine("kluski", "1", 7, "med2", "updated active substance");
         //help = test.deleteMedicine("kluski", "1", 6);
         //help = test.deleteAdmin("kluski2", "0510da914e99937301749e36c38de6b6");
         //help = test.deletePatient("kluski", "1", 18);
