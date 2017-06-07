@@ -26,6 +26,13 @@ public class HospitalService {
         return hospitalDao.getById(id);
     }
     
+    @GET
+    @Path("/getByDoctor/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getByHistory(@PathParam("id") int id) {
+        return hospitalDao.getByDoctor(id);
+    }
+    
     @POST
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
