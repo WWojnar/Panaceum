@@ -108,32 +108,38 @@ public class DoctorDao {
         List<Prescription> prescriptions = new ArrayList<>();
         Statement statement;
         ResultSet resultSet;
+        int cond = 0,
+                i = 0;
 
         try {
             connection.establishConnection();
             statement = connection.getConnection().createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM prescriptionView WHERE doctorId = " + doctorId);
+            String[] sql = {"SELECT * FROM prescriptionView WHERE doctorId = " + doctorId,
+                            "SELECT * FROM prescriptionExcerptView WHERE doctorId = " + doctorId};
+            while ((cond == 0) || (i < 2)) {
+                resultSet = statement.executeQuery(sql[i++]);
 
-            while (resultSet.next()) {
+                while (resultSet.next()) {
+                    cond++;
+                    Prescription prescription = new Prescription();
 
-                Prescription prescription = new Prescription();
+                    prescription.setId(resultSet.getInt("prescriptionId"));
+                    prescription.setDosage(resultSet.getString("dosage"));
+                    prescription.setPrescriptionDate(resultSet.getString("prescriptionDate"));
+                    prescription.setExpiryDate(resultSet.getString("expiryDate"));
+                    prescription.setMedicineId(resultSet.getInt("medicineId"));
+                    prescription.setMedicineName(resultSet.getString("medicineName"));
+                    prescription.setActiveSubstance(resultSet.getString("activeSubstance"));
+                    prescription.setTherapyPlanId(resultSet.getInt("therapyPlanId"));
+                    prescription.setExcerptId(resultSet.getInt("excerptId"));
+                    prescription.setDoctorid(resultSet.getInt("doctorid"));
+                    prescription.setPatientId(resultSet.getInt("patientId"));
+                    prescription.setPatientPesel(resultSet.getString("patientPesel"));
+                    prescription.setPatientFirstName(resultSet.getString("patientFirstName"));
+                    prescription.setPatientLastName(resultSet.getString("patientLastName"));
 
-                prescription.setId(resultSet.getInt("prescriptionId"));
-                prescription.setDosage(resultSet.getString("dosage"));
-                prescription.setPrescriptionDate(resultSet.getString("prescriptionDate"));
-                prescription.setExpiryDate(resultSet.getString("expiryDate"));
-                prescription.setMedicineId(resultSet.getInt("medicineId"));
-                prescription.setMedicineName(resultSet.getString("medicineName"));
-                prescription.setActiveSubstance(resultSet.getString("activeSubstance"));
-                prescription.setTherapyPlanId(resultSet.getInt("therapyPlanId"));
-                prescription.setExcerptId(resultSet.getInt("excerptId"));
-                prescription.setDoctorid(resultSet.getInt("doctorid"));
-                prescription.setPatientId(resultSet.getInt("patientId"));
-                prescription.setPatientPesel(resultSet.getString("patientPesel"));
-                prescription.setPatientFirstName(resultSet.getString("patientFirstName"));
-                prescription.setPatientLastName(resultSet.getString("patientLastName"));
-
-                prescriptions.add(prescription);
+                    prescriptions.add(prescription);
+                }
             }
         } catch (Exception e) {
             System.out.println(e.toString());
@@ -142,16 +148,7 @@ public class DoctorDao {
         }
         connection.closeConnection();
 
-        try {
-            if (prescriptions.get(0).getId() == 0) {System.err.println("to");
-                return this.getPrescriptionsFromExcerpt(user, doctorId);
-                //return Response.status(404).entity("No prescriptions for doctor found").build();
-            }
-        } catch (IndexOutOfBoundsException e) {System.err.println("to");
-            System.out.println(e.toString());
-            connection.closeConnection();
-            return Response.status(404).entity("No prescriptions for doctor found").build();
-        }
+        if (cond == 0) return Response.status(404).entity("No such doctor").build();
 
         Gson gson = new Gson();
         return Response.ok(gson.toJson(prescriptions)).build();
@@ -204,7 +201,8 @@ public class DoctorDao {
             if (prescriptions.get(0).getId() == 0) {
                 return Response.status(404).entity("No prescriptions for doctor found").build();
             }
-        } catch (IndexOutOfBoundsException e) {System.err.println("to");
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("to");
             System.out.println(e.toString());
             connection.closeConnection();
             return Response.status(404).entity("No prescriptions for doctor found").build();
@@ -213,7 +211,7 @@ public class DoctorDao {
         Gson gson = new Gson();
         return Response.ok(gson.toJson(prescriptions)).build();
     }
-    
+
     public Response add(User user, Doctor doctor) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
@@ -232,7 +230,7 @@ public class DoctorDao {
                     + "', '" + doctor.getPesel() + "', '" + doctor.getFirstName() + "', '" + doctor.getLastName()
                     + "', '" + doctor.getPhone() + "', '" + doctor.getEmail() + "', '" + doctor.getCity()
                     + "', '" + doctor.getStreet() + "', '" + doctor.getBuildingNumber() + "', '" + doctor.getFlatNumber()
-                    + "', '" + doctor.getZipCode() + "', '" + doctor.getLogin() +"')");
+                    + "', '" + doctor.getZipCode() + "', '" + doctor.getLogin() + "')");
 
             while (resultSet.next()) {
                 String result = resultSet.getString(1);
@@ -242,13 +240,15 @@ public class DoctorDao {
         } catch (SQLException ex) {
             System.out.println(ex.toString());
             connection.closeConnection();
-            
-            if (ex.toString().contains("login")) return Response.status(406).entity("Login already exist in DB").build();
+
+            if (ex.toString().contains("login")) {
+                return Response.status(406).entity("Login already exist in DB").build();
+            }
             return Response.serverError().build();
         }
-        
+
         connection.closeConnection();
-        
+
         if (doctor.getId() == 0) {
             return Response.status(406).entity("Doctor already exist in DB").build();
         }
@@ -256,7 +256,7 @@ public class DoctorDao {
         return Response.ok("{\"doctorId\":" + doctor.getId()
                 + ", \"login\":\"" + doctor.getLogin() + "\", \"password\":\"" + doctor.getPassword() + "\"}").build();
     }
-    
+
     public Response update(User user, Doctor doctor) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
@@ -276,11 +276,11 @@ public class DoctorDao {
             connection.closeConnection();
             return Response.serverError().build();
         }
-        
+
         connection.closeConnection();
         return Response.ok().build();
     }
-    
+
     public Response delete(User user, int id) {
         if (!userDao.validate(user)) {
             return Response.status(403).entity("User doesn't have necessary permissions").build();
@@ -306,5 +306,5 @@ public class DoctorDao {
         connection.closeConnection();
         return Response.ok().build();
     }
-    
+
 }
