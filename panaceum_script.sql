@@ -333,6 +333,64 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION deleteDoctor(_id integer) RETURNS void
+	LANGUAGE plpgsql
+	AS $$
+BEGIN
+	DELETE FROM tUser
+	WHERE id = (
+		SELECT userId
+		FROM doctorView
+		WHERE doctorId = _id);
+	
+	DELETE FROM doctor
+	WHERE id = _id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION deleteExcerpt(_id integer) RETURNS void
+	LANGUAGE plpgsql
+	AS $$
+BEGIN
+	UPDATE history
+	SET excerptId = NULL
+	WHERE excerptId = _id;
+	
+	DELETE FROM excerpt
+	WHERE id = _id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION deleteHistory(_id integer) RETURNS void
+	LANGUAGE plpgsql
+	AS $$
+	DECLARE _interviewId integer;
+	DECLARE _firstExaminationId integer;
+	DECLARE _infectionCardId integer;
+	DECLARE _excerptId integer;
+BEGIN
+	_interviewId := (SELECT interviewId FROM history WHERE id = _id);
+	_firstExaminationId := (SELECT firstExaminationId FROM history WHERE id = _id);
+	_infectionCardId := (SELECT infectionCardId FROM history WHERE id = _id);
+	_excerptId := (SELECT excerptId FROM history WHERE id = _id);
+	
+	DELETE FROM history
+	WHERE id = _id;
+	
+	DELETE FROM interview
+	WHERE id = _interviewId;
+	
+	DELETE FROM firstExamination
+	WHERE id = _firstExaminationId;
+	
+	DELETE FROM infectionCard
+	WHERE id = _infectionCardId;
+	
+	DELETE FROM excerpt
+	WHERE id = _excerptId;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION login(_login character varying, _passwd character varying) RETURNS character
 	LANGUAGE plpgsql
 	AS $$
@@ -593,8 +651,8 @@ CREATE TABLE person (
 	tUserId integer,
 	addressId integer NOT NULL,
 	PRIMARY KEY (pesel),
-	FOREIGN KEY (tUserId) REFERENCES tUser (id),
-	FOREIGN KEY (addressId) REFERENCES address (id) ON DELETE CASCADE
+	FOREIGN KEY (tUserId) REFERENCES tUser (id) ON DELETE SET NULL,
+	FOREIGN KEY (addressId) REFERENCES address (id)
 );
 
 CREATE TABLE hospital (
@@ -604,7 +662,7 @@ CREATE TABLE hospital (
 	phone character varying(30),
 	addressId integer NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (addressId) REFERENCES address (id) ON DELETE CASCADE
+	FOREIGN KEY (addressId) REFERENCES address (id)
 );
 
 CREATE TABLE doctor (
@@ -613,7 +671,7 @@ CREATE TABLE doctor (
 	licenceNumber character(10) NOT NULL,
 	pesel character(11) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (pesel) REFERENCES person (pesel) ON DELETE CASCADE
+	FOREIGN KEY (pesel) REFERENCES person (pesel)
 );
 
 CREATE TABLE patient (
@@ -623,7 +681,7 @@ CREATE TABLE patient (
 	bloodType character(2) NOT NULL,
 	pesel character(11) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (pesel) REFERENCES person (pesel) ON DELETE CASCADE
+	FOREIGN KEY (pesel) REFERENCES person (pesel)
 );
 
 CREATE TABLE excerpt (
@@ -708,13 +766,13 @@ CREATE TABLE history (
 	infectionCardId integer NOT NULL,
 	excerptId integer,
 	PRIMARY KEY (id),
-	FOREIGN KEY (patientId) REFERENCES patient (id),
-	FOREIGN KEY (doctorId) REFERENCES doctor (id),
-	FOREIGN KEY (hospitalId) REFERENCES hospital (id),
-	FOREIGN KEY (interviewId) REFERENCES interview (id) ON DELETE CASCADE,
-	FOREIGN KEY (firstExaminationId) REFERENCES firstExamination (id) ON DELETE CASCADE,
-	FOREIGN KEY (infectionCardId) REFERENCES infectionCard (id) ON DELETE CASCADE,
-	FOREIGN KEY (excerptId) REFERENCES excerpt (id) ON DELETE CASCADE
+	FOREIGN KEY (patientId) REFERENCES patient (id) ON DELETE CASCADE,
+	FOREIGN KEY (doctorId) REFERENCES doctor (id) ON DELETE CASCADE,
+	FOREIGN KEY (hospitalId) REFERENCES hospital (id) ON DELETE CASCADE,
+	FOREIGN KEY (interviewId) REFERENCES interview (id),
+	FOREIGN KEY (firstExaminationId) REFERENCES firstExamination (id),
+	FOREIGN KEY (infectionCardId) REFERENCES infectionCard (id),
+	FOREIGN KEY (excerptId) REFERENCES excerpt (id) ON DELETE SET NULL
 );
 
 CREATE TABLE therapyPlan (
@@ -741,12 +799,12 @@ CREATE TABLE prescription (
 	medicineId integer NOT NULL,
 	therapyPlanId integer,
 	excerptId integer,
-	doctorId integer NOT NULL,
+	doctorId integer,
 	PRIMARY KEY (id),
-	FOREIGN KEY (medicineId) REFERENCES medicine (id),
-	FOREIGN KEY (therapyPlanId) REFERENCES therapyPlan (id),
-	FOREIGN KEY (excerptId) REFERENCES excerpt (id),
-	FOREIGN KEY (doctorId) REFERENCES doctor (id)
+	FOREIGN KEY (medicineId) REFERENCES medicine (id) ON DELETE CASCADE,
+	FOREIGN KEY (therapyPlanId) REFERENCES therapyPlan (id) ON DELETE SET NULL,
+	FOREIGN KEY (excerptId) REFERENCES excerpt (id) ON DELETE SET NULL,
+	FOREIGN KEY (doctorId) REFERENCES doctor (id) ON DELETE SET NULL
 );
 
 --Views
